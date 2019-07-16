@@ -4,12 +4,6 @@
 #define U64 long long
 #define BRDSQ_120 120
 #define MAX_MOVES 2048
-#define FR2SQ(f, r) ( ( 21 + (f) ) + (r) * 10 )
-#define SQ64(sq120) Sq4ToSq120[sq120]
-
-#include<string>
-#include<algorithm>
-#include<iostream>
 
 enum { WHITE, BLACK, BOTH };
 
@@ -21,7 +15,8 @@ enum {
   A5 = 65, B5, C5, D5, E5, F5, G5, H5,
   A6 = 76, B6, C6, D6, E6, F6, G6, H6,
   A7 = 87, B7, C7, D7, E7, F7, G7, H7,
-  A8 = 98, B8, C8, D8, E8, F8, G8, H8
+  A8 = 98, B8, C8, D8, E8, F8, G8, H8, 
+  NO_SQ, OFF_BOARD
 };
 
 enum { EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK };
@@ -44,6 +39,7 @@ typedef struct {
   int enPas;
 
   int ply;
+  int hisPly;
   int fiftymove;
   U64 key;
 
@@ -51,11 +47,5 @@ typedef struct {
 
   int pList[13][10];
 } BOARD;
-
-extern int Sq120ToSq64[BRDSQ_120];
-extern int Sq64ToSq120[64];
-
-extern void initBoard();
-extern void Parse_Fen(BOARD* pos, std::string Fen);
 
 #endif
