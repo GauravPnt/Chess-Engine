@@ -4,7 +4,7 @@ project(ChessEngine)
 set(includes 
   main.cpp 
   board.cpp 
-  test.cpp
+  hash.cpp
 )
 
 include_directories(${PROJECT_SOURCE_DIR})

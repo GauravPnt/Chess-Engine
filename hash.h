@@ -11,12 +11,12 @@
                   (U64)rand() << 45 | \
                   (U64)rand() << 60 )
 
-extern U64 PieceKeys[13][120];
-extern U64 SideKey;
-extern U64 CastleKeys[16];
+extern unsigned U64 PieceKeys[13][120];
+extern unsigned U64 SideKey;
+extern unsigned U64 CastleKeys[16];
 //  enPas pos is taken care by PieceKeys[EMPTY][pos->enPas]
 
 extern void initHash();
-extern U64 GeneratePosKey(BOARD* pos);
+extern unsigned U64 GeneratePosKey(BOARD* pos);
 
 #endif

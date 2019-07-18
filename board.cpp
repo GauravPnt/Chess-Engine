@@ -4,9 +4,18 @@
 int Sq120ToSq64[BRDSQ_120];
 int Sq64ToSq120[64];
 
+char FilesBrd[BRDSQ_120];
+int RanksBrd[BRDSQ_120];
+
+std::string PiceChar = ".PNBRQKpnbrqk";
+std::string SideChar = "wb-";
+
 void initBoard() {
   std::fill(Sq120ToSq64, Sq120ToSq64 + BRDSQ_120, 65);
   std::fill(Sq64ToSq120, Sq64ToSq120 + 64, 120);
+
+  std::fill(FilesBrd, FilesBrd + BRDSQ_120, OFF_BOARD);
+  std::fill(RanksBrd, RanksBrd + BRDSQ_120, OFF_BOARD);
 
   int sq64 = 0;
   for(int rank = RANK_1; rank <= RANK_8; ++ rank) {
@@ -14,6 +23,8 @@ void initBoard() {
       int sq = FR2SQ(file, rank);
       Sq120ToSq64[sq] = sq64;
       Sq64ToSq120[sq64++] = sq;
+      FilesBrd[sq] = file + 'a';
+      RanksBrd[sq] = rank + 1;
     }
   }
 }
@@ -34,7 +45,61 @@ void ResetBoard(BOARD* pos) {
   pos->key = 0;
 }
 
-void Parse_Fen(BOARD* pos, std::string Fen){
+void printBoard() {
+  for (int i = 0; i < BRDSQ_120; ++i) {
+    if (i % 10 == 0) 
+      std::cout << '\n';
+    std::cout << std::setw(5) << Sq120ToSq64[i];
+  }
+
+  std::cout << '\n' << '\n';
+
+  for(int i = 0; i < 64; ++i){
+    if(i % 8 == 0)
+      std::cout << '\n';
+    std::cout << std::setw(5) << Sq64ToSq120[i];
+  }
+
+  std::cout << '\n' << '\n';
+}
+
+void printBoard(BOARD* pos){
+  std::cout << "BOARD\n\n";
+
+  int r = 8;
+  for(int rank = RANK_1; rank <= RANK_8; ++rank){
+    std::cout << std::setw(5) << r--;
+    for(int file = FILE_A; file <= FILE_H; ++file){
+      int sq120 = FR2SQ(file, rank);
+      int piece = pos->pieces[sq120];
+      std::cout << std::setw(5) << PiceChar[piece];
+    }
+    std::cout << '\n';
+  }
+
+  std::cout << '\n';
+  std::cout << std::setw(5) << ' ';
+  for(int file = FILE_A; file <= FILE_H; ++file)
+    std::cout << std::setw(5) << char(file + 'a');
+
+  std::cout << '\n';
+  std::cout << std::setw(10) << "side : " << SideChar[pos->side] << '\n';
+  std::cout << std::setw(10) << "enPas : " << FilesBrd[pos->enPas] << RanksBrd[pos->enPas] <<'\n';
+
+  std::cout << std::setw(10) << "castle : ";
+  std::cout << (pos->castlePerm & WKCA ? 'K' : '-');
+  std::cout << (pos->castlePerm & WQCA ? 'Q' : '-');
+  std::cout << (pos->castlePerm & BKCA ? 'k' : '-');
+  std::cout << (pos->castlePerm & BQCA ? 'q' : '-');
+
+  std::cout << '\n';
+
+  std::cout << std::setw(10) << "posKey : " << pos->key;
+
+  std::cout << "\n\n";
+}
+
+void Parse_Fen(BOARD* pos, const std::string Fen){
   int count = 0;
   int sq64 = 0;
   int idx = 0;
@@ -85,14 +150,10 @@ void Parse_Fen(BOARD* pos, std::string Fen){
       ++sq64; 
   }
 
-  ++idx;
   pos->side = ( Fen[idx] == 'w' ? WHITE : BLACK );
   
-  ++idx;
-  for(int i = 0; i < 4; ++i) {
-    ++idx;
-    if(Fen[idx] == ' ')
-      break;
+  idx += 2;
+  while(Fen[idx] != ' ') {
     switch(Fen[idx]) {
       case 'K' : pos->castlePerm |= WKCA; break;
       case 'Q' : pos->castlePerm |= WQCA; break;
@@ -100,10 +161,10 @@ void Parse_Fen(BOARD* pos, std::string Fen){
       case 'q' : pos->castlePerm |= BQCA; break;
       default  : break;
     }
+    ++idx;
   }
 
-  ++idx;
-  if(Fen[idx] != '-') {
+  if(Fen[++idx] != '-') {
     int file = Fen[idx] - 'a';
     int rank = Fen[++idx] - '1';
     pos->enPas = FR2SQ(file, rank);

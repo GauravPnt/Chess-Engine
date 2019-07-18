@@ -1,8 +1,8 @@
 #include"hash.h"
 
-U64 PieceKeys[13][120];
-U64 SideKey;
-U64 CastleKeys[16];
+unsigned U64 PieceKeys[13][120];
+unsigned U64 SideKey;
+unsigned U64 CastleKeys[16];
 
 void initHash() {
   for(int piece = EMPTY; piece <= bK; ++piece)
@@ -15,12 +15,12 @@ void initHash() {
     CastleKeys[key] = RAND_64;  
 }
 
-U64 GeneratePosKey(BOARD* pos){
-  U64 FinalKey = 0;
+unsigned U64 GeneratePosKey(BOARD* pos){
+  unsigned U64 FinalKey = 0;
   
   for(int sq = 0; sq < BRDSQ_120; ++sq){
     int piece = pos->pieces[sq];
-    if(piece != EMPTY)
+    if(piece != EMPTY && piece != OFF_BOARD)
       FinalKey ^= PieceKeys[piece][sq];
   }
 
