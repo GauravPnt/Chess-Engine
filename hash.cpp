@@ -15,21 +15,26 @@ void initHash() {
     CastleKeys[key] = RAND_64;  
 }
 
-unsigned U64 GeneratePosKey(BOARD* pos){
+unsigned U64 GeneratePosKey(const BOARD* pos){
   unsigned U64 FinalKey = 0;
   
-  for(int sq = 0; sq < BRDSQ_120; ++sq){
+  for(int sq = 0; sq < BRDSQ_120; ++sq) {
     int piece = pos->pieces[sq];
-    if(piece != EMPTY && piece != OFF_BOARD)
+    if(piece != EMPTY && piece != OFF_BOARD) {
+      assert(piece >= wP && piece <= bK);
       FinalKey ^= PieceKeys[piece][sq];
+    }
   }
 
   if(pos->side == WHITE)
     FinalKey ^= SideKey;
   
-  if(pos->enPas != NO_SQ)
+  if(pos->enPas != NO_SQ) {
+    assert(pos->enPas >= 0 && pos->enPas < BRDSQ_120);
     FinalKey ^= PieceKeys[EMPTY][pos->enPas];
+  }
 
+  assert(pos->castlePerm >= 0 && pos->castlePerm <= 15);
   FinalKey ^= CastleKeys[pos->castlePerm];
 
   return FinalKey; 

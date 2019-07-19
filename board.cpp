@@ -4,11 +4,17 @@
 int Sq120ToSq64[BRDSQ_120];
 int Sq64ToSq120[64];
 
-char FilesBrd[BRDSQ_120];
+int FilesBrd[BRDSQ_120];
 int RanksBrd[BRDSQ_120];
 
 std::string PiceChar = ".PNBRQKpnbrqk";
 std::string SideChar = "wb-";
+
+int pieceBig[13] = { false, false, true, true, true, true, true, false, true, true, true, true, true };
+int pieceMaj[13] = { false, false, false, false, true, true, true, false, false, false, true, true, true };
+int pieceMin[13] = { false, false, true, true, false, false, false, false, true, true, false, false, false };
+int pieceVal[13] = { 0, 100, 325, 325, 550, 1000, 50000, 100, 325, 325, 550, 1000, 50000 };
+int pieceCol[13] = { BOTH, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK };
 
 void initBoard() {
   std::fill(Sq120ToSq64, Sq120ToSq64 + BRDSQ_120, 65);
@@ -23,19 +29,26 @@ void initBoard() {
       int sq = FR2SQ(file, rank);
       Sq120ToSq64[sq] = sq64;
       Sq64ToSq120[sq64++] = sq;
-      FilesBrd[sq] = file + 'a';
-      RanksBrd[sq] = rank + 1;
+      FilesBrd[sq] = file;
+      RanksBrd[sq] = rank;
     }
   }
 }
 
 void ResetBoard(BOARD* pos) {
-  for(int idx = 0; idx < BRDSQ_120; ++idx)
-    pos->pieces[idx] = OFF_BOARD;
+  std::fill(pos->pieces, pos->pieces + BRDSQ_120, OFF_BOARD);
   
   for(int idx = 0; idx < 64; ++idx)
     pos->pieces[SQ120(idx)] = EMPTY;
+
+  std::fill(pos->bigPce, pos->bigPce + 2, 0);
+  std::fill(pos->majPce, pos->majPce + 2, 0);
+  std::fill(pos->minPce, pos->minPce + 2, 0);
+  std::fill(pos->material, pos->material + 2, 0);
   
+  std::fill(pos->pceNum, pos->pceNum + 13, 0);
+
+  pos->KingSq[WHITE] = pos->KingSq[BLACK] = NO_SQ;
   pos->side = BOTH;
   pos->enPas = NO_SQ;
   pos->castlePerm = 0;
@@ -84,7 +97,7 @@ void printBoard(BOARD* pos){
 
   std::cout << '\n';
   std::cout << std::setw(10) << "side : " << SideChar[pos->side] << '\n';
-  std::cout << std::setw(10) << "enPas : " << FilesBrd[pos->enPas] << RanksBrd[pos->enPas] <<'\n';
+  std::cout << std::setw(10) << "enPas : " << FilesBrd[pos->enPas] + 'a' << RanksBrd[pos->enPas] + 1 <<'\n';
 
   std::cout << std::setw(10) << "castle : ";
   std::cout << (pos->castlePerm & WKCA ? 'K' : '-');
@@ -177,4 +190,79 @@ void Parse_Fen(BOARD* pos, const std::string Fen){
   pos->ply = Fen[++idx] - '0';
 
   pos->key = GeneratePosKey(pos);
+
+  UpdateListMaterial(pos);
+}
+
+//  update evaluation material
+void UpdateListMaterial(BOARD* pos) {
+  for(int idx = 0; idx < BRDSQ_120; ++idx) {
+    int piece = pos->pieces[idx];
+    if(piece != OFF_BOARD && piece != EMPTY) {
+      int color = pieceCol[piece];
+
+      if(pieceBig[piece]) ++pos->bigPce[color];
+      if(pieceMaj[piece]) ++pos->majPce[color];
+      if(pieceMin[piece]) ++pos->minPce[color];
+
+      pos->material[color] += pieceVal[piece];
+
+      pos->pList[piece][pos->pceNum[piece]] = idx;
+      ++pos->pceNum[piece];
+
+      if(piece == wK) pos->KingSq[color] = idx;
+      if(piece == bK) pos->KingSq[color] = idx;
+    }
+  }
+}
+
+//  assertions to check if everything is right
+bool CheckBoard(const BOARD* pos) {
+  int t_pceNum[13] = {};
+  int t_bigPce[2] = {};
+  int t_majPce[2] = {};
+  int t_minPce[2] = {};
+  int t_material[2] = {};
+
+  //  check piece list
+  for(int t_piece = wP; t_piece <= bK; ++t_piece){
+    for(int t_pce_num = 0; t_pce_num < pos->pceNum[t_piece]; ++t_pce_num){
+      int sq120 = pos->pList[t_piece][t_pce_num];
+      assert(pos->pieces[sq120] == t_piece);
+    }
+  }
+
+  //  check other evaluation improvement arrays
+  for(int sq64 = 0; sq64 < 64; ++sq64){
+    int sq120 = SQ120(sq64);
+    int t_pce = pos->pieces[sq120];
+    int color = pieceCol[t_pce];
+    
+    ++t_pceNum[t_pce];
+
+    if(color != BOTH) {
+      if(pieceBig[t_pce]) ++t_bigPce[color];
+      if(pieceMaj[t_pce]) ++t_majPce[color];
+      if(pieceMin[t_pce]) ++t_minPce[color];
+
+      t_material[color] += pieceVal[t_pce];
+    }
+  }
+
+  assert(t_material[WHITE] == pos->material[WHITE] && t_material[BLACK] == pos->material[BLACK]);
+  assert(t_bigPce[WHITE] == pos->bigPce[WHITE] && t_bigPce[BLACK] == pos->bigPce[BLACK]);
+  assert(t_majPce[WHITE] == pos->majPce[WHITE] && t_majPce[BLACK] == pos->majPce[BLACK]);
+  assert(t_minPce[WHITE] == pos->minPce[WHITE] && t_minPce[BLACK] == pos->minPce[BLACK]);
+  
+  assert(pos->side == WHITE || pos->side == BLACK);
+  assert(GeneratePosKey(pos) == pos->key);
+
+  assert(pos->enPas == NO_SQ 
+          || (RanksBrd[pos->enPas] == RANK_6 && pos->side == WHITE)
+          || (RanksBrd[pos->enPas] == RANK_3 && pos->side == BLACK));
+
+  assert(pos->pieces[pos->KingSq[WHITE]] == wK);
+  assert(pos->pieces[pos->KingSq[BLACK]] == bK);
+
+  return true;
 }

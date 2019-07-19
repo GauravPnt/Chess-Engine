@@ -5,6 +5,8 @@
 #define BRDSQ_120 120
 #define MAX_MOVES 2048
 
+#include<assert.h>
+
 enum { WHITE, BLACK, BOTH };
 
 enum {
@@ -42,6 +44,17 @@ typedef struct {
   int hisPly;
   int fiftymove;
   unsigned U64 key;
+
+  //  evaluation improvement sugars
+
+  //  holds King's square
+  int KingSq[2];
+  //  all below store counts of respective pieces
+  int pceNum[13]; //  all
+  int bigPce[2];  //  anything not a pawn
+  int majPce[2];  //  rook, queen
+  int minPce[2];  //  knight, bishop
+  int material[2];   
 
   UNDO history[MAX_MOVES];
 

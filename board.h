@@ -17,8 +17,14 @@
 extern int Sq120ToSq64[BRDSQ_120];
 extern int Sq64ToSq120[64];
 
-extern char FilesBrd[BRDSQ_120];
+extern int FilesBrd[BRDSQ_120];
 extern int RanksBrd[BRDSQ_120];
+
+extern int pieceBig[13];
+extern int pieceMaj[13];
+extern int pieceMin[13];
+extern int pieceVal[13];
+extern int pieceCol[13];
 
 //  Conversion array to chars
 extern std::string PiceChar;
@@ -34,5 +40,7 @@ extern void Parse_Fen(BOARD* pos, const std::string Fen);
 extern void printBoard();
 //  Print the pieces as present on the board
 extern void printBoard(BOARD* pos);
+extern void UpdateListMaterial(BOARD* pos);
+extern bool CheckBoard(const BOARD* pos);
 
 #endif

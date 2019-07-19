@@ -17,6 +17,6 @@ extern unsigned U64 CastleKeys[16];
 //  enPas pos is taken care by PieceKeys[EMPTY][pos->enPas]
 
 extern void initHash();
-extern unsigned U64 GeneratePosKey(BOARD* pos);
+extern unsigned U64 GeneratePosKey(const BOARD* pos);
 
 #endif

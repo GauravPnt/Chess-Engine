@@ -11,10 +11,21 @@ int main(int argc, char const *argv[]) {
 
   Parse_Fen(&board, START_FEN);
   printBoard(&board);
+
+  assert(CheckBoard(&board));
+
   Parse_Fen(&board, FEN1);
   printBoard(&board);
+
+  assert(CheckBoard(&board));
+
   Parse_Fen(&board, FEN2);
   printBoard(&board);
+
+  assert(CheckBoard(&board));
+
   Parse_Fen(&board, FEN3);
   printBoard(&board);
+
+  assert(CheckBoard(&board));
 }
