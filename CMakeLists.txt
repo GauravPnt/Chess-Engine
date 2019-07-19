@@ -5,6 +5,8 @@ set(includes
   main.cpp 
   board.cpp 
   hash.cpp
+  attack.cpp
+  notation.cpp
 )
 
 include_directories(${PROJECT_SOURCE_DIR})

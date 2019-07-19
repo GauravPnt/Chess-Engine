@@ -9,23 +9,33 @@ int main(int argc, char const *argv[]) {
   initBoard();
   BOARD board;
 
-  Parse_Fen(&board, START_FEN);
-  printBoard(&board);
+  // int move = 0;
+  // int from = A2, to = H7;
+  // int cap = wR, prom = wN;
 
-  assert(CheckBoard(&board));
+  // move = ((from)|(to<<7)|(cap<<14)|(prom<<20));
+
+  // std::cout << FROMSQ(move) << ' ' << TOSQ(move) << ' '<< CAPTURED(move) << ' ' << PROMOTED(move);
+
+  // std::cout << '\n' << PrSq(from) << '\n' << PrSq(to) << PrMove(move) <<'\n';
 
   Parse_Fen(&board, FEN1);
   printBoard(&board);
 
   assert(CheckBoard(&board));
 
-  Parse_Fen(&board, FEN2);
-  printBoard(&board);
+  // Parse_Fen(&board, FEN1);
+  // printBoard(&board);
 
-  assert(CheckBoard(&board));
+  // assert(CheckBoard(&board));
 
-  Parse_Fen(&board, FEN3);
-  printBoard(&board);
+  // Parse_Fen(&board, FEN2);
+  // printBoard(&board);
 
-  assert(CheckBoard(&board));
+  // assert(CheckBoard(&board));
+
+  // Parse_Fen(&board, FEN3);
+  // printBoard(&board);
+
+  // assert(CheckBoard(&board));
 }

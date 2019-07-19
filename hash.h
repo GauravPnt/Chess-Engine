@@ -2,7 +2,7 @@
 #define HASH_H
 
 #include<cstdlib>
-#include"defs.h"
+#include"board.h"
 
 //  Generates 64 bit random number
 #define RAND_64 ( (U64)rand() | \
