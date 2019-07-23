@@ -9,38 +9,29 @@ const std::string CAST = "4k3/8/8/8/6r1/8/8/R3K2R w KQkq - 0 1";
 int main(int argc, char const *argv[]) {
   initHash();
   initBoard();
-  BOARD board;
+  
+  BOARD *board = new BOARD;
+  MOVE_LIST *list = new MOVE_LIST;
 
-  // int move = 0;
-  // int from = A2, to = H7;
-  // int cap = wR, prom = wN;
+  Parse_Fen(board, START_FEN);
+  GenerateAllMoves(board, list);
 
-  // move = ((from)|(to<<7)|(cap<<14)|(prom<<20));
+  printBoard(board);
+  getchar();
+  
+  for(int moveNum = 0; moveNum < list->count; ++moveNum) {
+    int move = list->moves[moveNum].move;
 
-  // std::cout << FROMSQ(move) << ' ' << TOSQ(move) << ' '<< CAPTURED(move) << ' ' << PROMOTED(move);
+    if(!makeMove(board, move))
+      continue;
+    
+    std::cout << PrMove(move) << '\n';
+    printBoard(board);
 
-  // std::cout << '\n' << PrSq(from) << '\n' << PrSq(to) << PrMove(move) <<'\n';
+    takeMove(board);
+    std::cout << PrMove(move) << '\n';
+    printBoard(board);
 
-  Parse_Fen(&board, CAST);
-  printBoard(&board);
-
-  MOVE_LIST list;
-
-  GenerateAllMoves(&board, &list);
-  PrintMoveList(&list);
-
-  // Parse_Fen(&board, FEN1);
-  // printBoard(&board);
-
-  // assert(CheckBoard(&board));
-
-  // Parse_Fen(&board, FEN2);
-  // printBoard(&board);
-
-  // assert(CheckBoard(&board));
-
-  // Parse_Fen(&board, FEN3);
-  // printBoard(&board);
-
-  // assert(CheckBoard(&board));
+    getchar();
+  }
 }

@@ -9,6 +9,7 @@ set(includes
   notation.cpp
   moves.cpp
   movegen.cpp
+  validate.cpp
 )
 
 include_directories(${PROJECT_SOURCE_DIR})

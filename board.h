@@ -85,6 +85,7 @@ extern int pieceMaj[13];
 extern int pieceMin[13];
 extern int pieceVal[13];
 extern int pieceCol[13];
+extern int piecePwn[13];
 
 //  Conversion array to chars
 extern std::string PiceChar;
@@ -92,15 +93,26 @@ extern std::string SideChar;
 
 //  Initialize the conversion arrays
 extern void initBoard();
+
 extern void ResetBoard(BOARD* pos);
+
 //  Prints the conversion from 64 to 120 and vice versa
 extern void printBoard();
+
 //  Print the pieces as present on the board
 extern void printBoard(BOARD* pos);
+
 extern void UpdateListMaterial(BOARD* pos);
+
+// assertion utility
 extern bool CheckBoard(const BOARD* pos);
 
 extern void Parse_Fen(BOARD* pos, const std::string Fen);
+
+// convert from 120 to sq (e.g. 21 to A1)
 extern std::string PrSq(const int sq);
+
+// print move in format FsqTsqPr
+extern std::string PrMove(const int move);
 
 #endif

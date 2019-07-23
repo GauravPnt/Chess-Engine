@@ -15,6 +15,7 @@ int pieceMaj[13] = { false, false, false, false, true, true, true, false, false,
 int pieceMin[13] = { false, false, true, true, false, false, false, false, true, true, false, false, false };
 int pieceVal[13] = { 0, 100, 325, 325, 550, 1000, 50000, 100, 325, 325, 550, 1000, 50000 };
 int pieceCol[13] = { BOTH, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK };
+int piecePwn[13] = { false, true, false, false, false, false, false, true, false, false, false, false, false };
 
 void initBoard() {
   std::fill(Sq120ToSq64, Sq120ToSq64 + BRDSQ_120, 65);

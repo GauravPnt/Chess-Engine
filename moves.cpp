@@ -45,7 +45,7 @@ static void AddEnPassantMove(const BOARD* pos, int move, MOVE_LIST* list) {
 
 static void AddPawnMove(const BOARD *pos, const int from, const int to, 
                   const int cap, const int side, MOVE_LIST *list) {
-  assert(side == BLACK || side == WHITE);
+  assert(sideValid(side));
   if(side == WHITE){
     if(RanksBrd[from] == RANK_7) {
       for(int pro = wN; pro <= wQ; ++pro)
@@ -63,7 +63,7 @@ static void AddPawnMove(const BOARD *pos, const int from, const int to,
 
 static void AddPawnMove(const BOARD *pos, const int from, const int to, 
                   const int side, MOVE_LIST *list) {
-  assert(side == BLACK || side == WHITE);
+  assert(sideValid(side));
   if(side == WHITE){
     if(RanksBrd[from] == RANK_7) {
       for(int pro = wN; pro <= wQ; ++pro)
@@ -80,18 +80,21 @@ static void AddPawnMove(const BOARD *pos, const int from, const int to,
 }
 
 void GenerateAllMoves(const BOARD* pos, MOVE_LIST* list) {
+
+#ifdef DEBUG
   assert(CheckBoard(pos));
+#endif
   
   list->count = 0;
 
   int pce = EMPTY;
   int side = pos->side;
 
-  assert(side == WHITE || side == BLACK);
+  assert(sideValid(side));
   if(side == WHITE) {
     for(int pceNum = 0; pceNum < pos->pceNum[wP]; ++pceNum) {
       int sq = pos->pList[wP][pceNum];
-      assert(sq != OFF_BOARD);
+      assert(onBoard(sq));
       if(pos->pieces[sq + PMov[WHITE][0]] == EMPTY) {
         AddPawnMove(pos, sq, sq + PMov[WHITE][0], WHITE, list);
         if(RanksBrd[sq] == RANK_2 && pos->pieces[sq + PMov[WHITE][1]] == EMPTY)
@@ -102,9 +105,9 @@ void GenerateAllMoves(const BOARD* pos, MOVE_LIST* list) {
                         pieceCol[pos->pieces[sq + Pattack[WHITE][idx]]] == BLACK)
           AddPawnMove(pos, sq, sq + Pattack[WHITE][idx], pos->pieces[sq + Pattack[WHITE][idx]],
                       WHITE, list);
-        if(sq + Pattack[WHITE][idx] == pos->enPas)
-          AddPawnMove(pos, sq, sq + Pattack[WHITE][idx], pos->pieces[sq + Pattack[WHITE][idx]], 
-                      WHITE, list);
+        if(pos->enPas != NO_SQ)
+          if(sq + Pattack[WHITE][idx] == pos->enPas)
+            AddEnPassantMove(pos, MOVE(sq, pos->enPas, EMPTY, EMPTY, EPFLAG), list);
       }
     }
     
@@ -124,7 +127,7 @@ void GenerateAllMoves(const BOARD* pos, MOVE_LIST* list) {
   } else {
     for(int pceNum = 0; pceNum < pos->pceNum[bP]; ++pceNum) {
       int sq = pos->pList[bP][pceNum];
-      assert(sq != OFF_BOARD);
+      assert(onBoard(sq));
       if(pos->pieces[sq + PMov[BLACK][0]] == EMPTY) {
         AddPawnMove(pos, sq, sq + PMov[BLACK][0], BLACK, list);
         if(RanksBrd[sq] == RANK_7 && pos->pieces[sq + PMov[BLACK][1]] == EMPTY)
@@ -134,9 +137,9 @@ void GenerateAllMoves(const BOARD* pos, MOVE_LIST* list) {
         if(!SQOFFBOARD(sq + Pattack[BLACK][idx]) && pieceCol[pos->pieces[sq + Pattack[BLACK][idx]]] == WHITE)
           AddPawnMove(pos, sq, sq + Pattack[BLACK][idx], 
                       pos->pieces[sq + Pattack[BLACK][idx]], BLACK, list);
-        if(sq + Pattack[BLACK][idx] == pos->enPas)
-          AddPawnMove(pos, sq, sq + Pattack[BLACK][idx], 
-                      pos->pieces[sq + Pattack[BLACK][idx]], BLACK, list);
+        if(pos->enPas != NO_SQ)
+          if(sq + Pattack[BLACK][idx] == pos->enPas)
+            AddEnPassantMove(pos, MOVE(sq, pos->enPas, EMPTY, EMPTY, EPFLAG), list);
       }
     }
 
@@ -158,7 +161,7 @@ void GenerateAllMoves(const BOARD* pos, MOVE_LIST* list) {
     int pce = NonSlidePce[side][idx];
     for(int pceNum = 0; pceNum < pos->pceNum[pce]; ++pceNum) {
       int sq = pos->pList[pce][pceNum];
-      assert(sq != OFF_BOARD);
+      assert(onBoard(sq));
       for(int inc = 0; inc < 8; ++inc) {
         int to = sq + Mov[pce][inc];
         if(SQOFFBOARD(to))
@@ -175,7 +178,7 @@ void GenerateAllMoves(const BOARD* pos, MOVE_LIST* list) {
     int pce = SlidePieces[side][idx];
     for(int pceNum = 0; pceNum < pos->pceNum[pce]; ++pceNum) {
       int sq = pos->pList[pce][pceNum];
-      assert(sq != OFF_BOARD);
+      assert(onBoard(sq));
       int limit = 4;
       if(isQ(pce))
         limit = 8;

@@ -1,7 +1,8 @@
 #ifndef MOVES_H
 #define MOVES_H
 
-#include "board.h"
+#include"board.h"
+#include"validate.h"
 
 #define isP(pce) ((pce) == wP || (pce) == bP)
 #define isN(pce) ((pce) == wN || (pce) == bN)
@@ -65,8 +66,24 @@ static void AddPawnMove(const BOARD *pos, const int from, const int to,
                   const int side, MOVE_LIST *list);
 extern void GenerateAllMoves(const BOARD* pos, MOVE_LIST* list);
 
+//  Clear the piece, update key, material, minPce, majPce, bigPce,
+//  pList, pieces, pceNum
 static void clearPiece(const int sq, BOARD *pos);
+
+//  add piece, update key, material, majPce, minPce, bigPce,
+//  pList, pieces, pceNum
 static void addPiece(const int sq, BOARD *pos, const int pce);
+
+// move piece, update key, pList, pieces
 static void movePiece(const int from, const int to, BOARD *pos);
+
+// values of castlePerm for each sq
+static int castlePerm(int sq);
+
+// takes move and updates the board structure
+extern bool makeMove(BOARD *pos, int move);
+
+// undo a move
+extern void takeMove(BOARD *pos);
 
 #endif

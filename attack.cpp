@@ -12,7 +12,10 @@ bool isSqAttacked(const int sq, const int side, const BOARD* pos){
 
   assert(sq != OFF_BOARD);
   assert(side == WHITE || side == BLACK);
+
+#ifdef DEBUG
   assert(CheckBoard(pos));
+#endif
 
   //  pawns
   for(int idx = 0; idx < 4; ++idx) {
