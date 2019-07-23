@@ -4,5 +4,7 @@
 #include"hash.h"
 #include"board.h"
 #include"moves.h"
+#include"test.h"
+#include"validate.h"
 
 #endif

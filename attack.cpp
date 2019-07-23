@@ -8,7 +8,7 @@ const int BMov[4] = {-9, -11, 11, 9};
 const int RMov[4] = {-1, -10, 1, 10};
 const int KMov[8] = {-1, -10, 1, 10, -9, -11, 11, 9};
 
-bool isSqAttacked(const int sq, const int side, const BOARD* pos){
+bool isSqAttacked(const int sq, const int side, const BOARD* pos) {
 
   assert(sq != OFF_BOARD);
   assert(side == WHITE || side == BLACK);
@@ -18,11 +18,15 @@ bool isSqAttacked(const int sq, const int side, const BOARD* pos){
 #endif
 
   //  pawns
-  for(int idx = 0; idx < 4; ++idx) {
-    int pce = pos->pieces[sq + Pattack[side][idx]];
-    if(isP(pce) && pieceCol[pce] == side)
-      return true;
-  }
+  if(side == WHITE) {
+		if(pos->pieces[sq-11] == wP || pos->pieces[sq-9] == wP) {
+			return true;
+		}
+	} else {
+		if(pos->pieces[sq+11] == bP || pos->pieces[sq+9] == bP) {
+			return true;
+		}	
+	}
 
   //  knights
   for(int idx = 0; idx < 8; ++idx) {

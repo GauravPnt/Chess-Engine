@@ -66,6 +66,9 @@ static void movePiece(const int from, const int to, BOARD *pos) {
 
   int pce = pos->pieces[from];
 
+  if(!pceValid(pce))
+    getchar();
+
   assert(pceValid(pce));
 
   pos->key ^= PieceKeys[pce][from];
@@ -130,11 +133,6 @@ bool makeMove(BOARD *pos, int move) {
       case G8 :  movePiece(H8, F8, pos);  break;
       default :  assert(false); break;
     } 
-  } else if(move & PSFLAG) {
-      if(side == WHITE)
-        pos->enPas = to - 10;
-      else
-        pos->enPas = to + 10;
   }
 
   if(pos->enPas != NO_SQ) pos->key ^= PieceKeys[EMPTY][pos->enPas];
@@ -142,6 +140,7 @@ bool makeMove(BOARD *pos, int move) {
   
   pos->castlePerm &= castlePerm(from);
   pos->castlePerm &= castlePerm(to);
+  pos->enPas = NO_SQ;
   
   pos->key ^= CastleKeys[pos->castlePerm];
 
@@ -157,7 +156,7 @@ bool makeMove(BOARD *pos, int move) {
   ++pos->hisPly;
   ++pos->ply;
 
-  if(piecePwn[from]) {
+  if(piecePwn[pos->pieces[from]]) {
     pos->fiftymove = 0;
     if(move & PSFLAG) {
       if(side == WHITE) {
@@ -165,7 +164,7 @@ bool makeMove(BOARD *pos, int move) {
         assert(RanksBrd[pos->enPas] == RANK_3);
       } else {
         pos->enPas = from - 10;
-        assert(RanksBrd[pos->enPas] == RANK_7);
+        assert(RanksBrd[pos->enPas] == RANK_6);
       }
       pos->key ^= PieceKeys[EMPTY][pos->enPas];
     }
@@ -183,14 +182,13 @@ bool makeMove(BOARD *pos, int move) {
   if(isK(pos->pieces[to]))
     pos->KingSq[pos->side] = to;
   
-  pos->side ^= 1;
   pos->key ^= SideKey;
+  pos->side ^= 1;
 
   if(isSqAttacked(pos->KingSq[side], pos->side, pos)) {
     takeMove(pos);
     return false;
   }
-
   return true;
 }
 
@@ -244,7 +242,7 @@ void takeMove(BOARD *pos) {
   if(prPce != EMPTY) {
     assert(pceValid(prPce) && !piecePwn[prPce]);
     clearPiece(from, pos);
-    addPiece(from, pos, pieceCol[prPce] == WHITE ? wP : wB);
+    addPiece(from, pos, pieceCol[prPce] == WHITE ? wP : bP);
   }
 
   pos->key = pos->history[pos->hisPly].key;

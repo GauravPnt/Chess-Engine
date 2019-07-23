@@ -20,7 +20,7 @@ unsigned U64 GeneratePosKey(const BOARD* pos){
   
   for(int sq = 0; sq < BRDSQ_120; ++sq) {
     int piece = pos->pieces[sq];
-    if(piece != EMPTY && piece != OFF_BOARD) {
+    if(piece != EMPTY && piece != OFF_BOARD && piece != NO_SQ) {
       assert(piece >= wP && piece <= bK);
       FinalKey ^= PieceKeys[piece][sq];
     }

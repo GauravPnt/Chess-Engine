@@ -25,7 +25,7 @@ void initBoard() {
   std::fill(RanksBrd, RanksBrd + BRDSQ_120, OFF_BOARD);
 
   int sq64 = 0;
-  for(int rank = RANK_1; rank <= RANK_8; ++ rank) {
+  for(int rank = RANK_1; rank <= RANK_8; ++rank) {
     for(int file = FILE_A; file <= FILE_H; ++file) {
       int sq = FR2SQ(file, rank);
       Sq120ToSq64[sq] = sq64;
@@ -173,12 +173,18 @@ bool CheckBoard(const BOARD* pos) {
   assert(t_minPce[WHITE] == pos->minPce[WHITE] && t_minPce[BLACK] == pos->minPce[BLACK]);
   
   assert(pos->side == WHITE || pos->side == BLACK);
+
+  if(GeneratePosKey(pos) != pos->key)
+    getchar();
+  
   assert(GeneratePosKey(pos) == pos->key);
 
   assert(pos->enPas == NO_SQ 
           || (RanksBrd[pos->enPas] == RANK_6 && pos->side == WHITE)
           || (RanksBrd[pos->enPas] == RANK_3 && pos->side == BLACK));
 
+  if(pos->pieces[pos->KingSq[WHITE]] != wK)
+    getchar();
   assert(pos->pieces[pos->KingSq[WHITE]] == wK);
   assert(pos->pieces[pos->KingSq[BLACK]] == bK);
 
