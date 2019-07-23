@@ -1,7 +1,7 @@
 #include"moves.h"
 
-const int PMov[2] = {-10, +10};
-const int Pattack[4] = {-9, -11, 9, 11};
+const int PMov[2][2] = {{10, 20}, {-10, -20}};
+const int Pattack[2][2] = {{9, 11}, {-9, -11}};
 
 const int NMov[8] = {-8, -19, -21, -12, 8, 19, 21, 12};
 const int BMov[4] = {-9, -11, 11, 9};
@@ -10,9 +10,13 @@ const int KMov[8] = {-1, -10, 1, 10, -9, -11, 11, 9};
 
 bool isSqAttacked(const int sq, const int side, const BOARD* pos){
 
+  assert(sq != OFF_BOARD);
+  assert(side == WHITE || side == BLACK);
+  assert(CheckBoard(pos));
+
   //  pawns
   for(int idx = 0; idx < 4; ++idx) {
-    int pce = pos->pieces[sq + Pattack[idx]];
+    int pce = pos->pieces[sq + Pattack[side][idx]];
     if(isP(pce) && pieceCol[pce] == side)
       return true;
   }

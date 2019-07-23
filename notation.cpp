@@ -103,7 +103,7 @@ std::string PrMove(const int move) {
 
   int promoted = PROMOTED(move);
 
-  std::string res = {(char)ff, (char)rf, (char)ft, (char)rt};
+  std::string res = {(char)(ff + 'a'), (char)(rf + '1'), (char)(ft + 'a'), (char)(rt + '1')};
   if (promoted) {
     char pchar = 'q';
     if (isN(promoted))

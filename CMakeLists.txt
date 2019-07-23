@@ -7,6 +7,8 @@ set(includes
   hash.cpp
   attack.cpp
   notation.cpp
+  moves.cpp
+  movegen.cpp
 )
 
 include_directories(${PROJECT_SOURCE_DIR})

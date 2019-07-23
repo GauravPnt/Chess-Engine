@@ -41,6 +41,7 @@ enum { WKCA = 1, WQCA = 2, BKCA = 4, BQCA = 8};
 typedef struct {
   int move;
   int castlePerm;
+  int fiftymove;
   int enPas;
   unsigned U64 key;
 } UNDO;

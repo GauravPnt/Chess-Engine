@@ -96,7 +96,7 @@ void printBoard(BOARD* pos){
 
   std::cout << '\n';
   std::cout << std::setw(10) << "side : " << SideChar[pos->side] << '\n';
-  std::cout << std::setw(10) << "enPas : " << FilesBrd[pos->enPas] + 'a' << RanksBrd[pos->enPas] + 1 <<'\n';
+  std::cout << std::setw(10) << "enPas : " << char(FilesBrd[pos->enPas] + 'a') << RanksBrd[pos->enPas] + 1 <<'\n';
 
   std::cout << std::setw(10) << "castle : ";
   std::cout << (pos->castlePerm & WKCA ? 'K' : '-');
