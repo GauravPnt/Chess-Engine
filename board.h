@@ -6,7 +6,7 @@
 #define MAX_MOVES 2048
 
 //  Convert from given file, rank to 120 board
-#define FR2SQ(f, r) ( ( 21 + (f) ) + (r) * 10 )
+#define FR2SQ(f, r) ((21 + (f)) + (r) * 10)
 //  Convert from 120 board to 64 board
 #define SQ64(sq120) (Sq120ToSq64[(sq120)])
 //  Convert from 64 board to 120 board
@@ -19,8 +19,10 @@
 
 #include<assert.h>
 
+//Sides
 enum { WHITE, BLACK, BOTH };
 
+//Defining position for 120 board
 enum {
   A1 = 21, B1, C1, D1, E1, F1, G1, H1,
   A2 = 31, B2, C2, D2, E2, F2, G2, H2,
@@ -33,11 +35,17 @@ enum {
   NO_SQ, OFF_BOARD
 };
 
+//Piece enums
 enum { EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK };
+//Rank enums
 enum { RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8 };
+//File enums
 enum { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H };
+//Castling bit enums
 enum { WKCA = 1, WQCA = 2, BKCA = 4, BQCA = 8};
 
+
+//Undo move structure
 typedef struct {
   int move;
   int castlePerm;
@@ -46,40 +54,50 @@ typedef struct {
   unsigned U64 key;
 } UNDO;
 
+//Board state representation
 typedef struct {
-  int pieces[BRDSQ_120];
 
+//  Board position to pieces mapping
+  int pieces[BRDSQ_120];
+//  Side of the current player
   int side;
+//  Castle permission bit
   int castlePerm;
+//  Store the en-passant square, one before the played pawn
   int enPas;
 
   int ply;
   int hisPly;
-  int fiftymove;
+  int fifty_move;
   unsigned U64 key;
 
-  //  evaluation improvement sugars
-
-  //  holds King's square
+//  Holds kings square
   int KingSq[2];
-  //  all below store counts of respective pieces
-  int pceNum[13]; //  all
-  int bigPce[2];  //  anything not a pawn
-  int majPce[2];  //  rook, queen
-  int minPce[2];  //  knight, bishop
-  int material[2];   
+//  Count of all pieces
+  int pceNum[13];
+//  Count of all the big pieces
+  int bigPce[2];
+//  Count of all the major pieces : rook, queen
+  int majPce[2];
+//  Count of all the minor pieces : knight, bishop
+  int minPce[2];
+//  material of the two sides
+  int material[2];
 
   UNDO history[MAX_MOVES];
-
+//  mapping from all pieces to the 120 board
   int pList[13][10];
 } BOARD;
 
+//Conversion utility
 extern int Sq120ToSq64[BRDSQ_120];
 extern int Sq64ToSq120[64];
 
+//Return file and ranks corresponding to the square
 extern int FilesBrd[BRDSQ_120];
 extern int RanksBrd[BRDSQ_120];
 
+//Mapping of the pieces to their value
 extern int pieceBig[13];
 extern int pieceMaj[13];
 extern int pieceMin[13];
@@ -87,32 +105,29 @@ extern int pieceVal[13];
 extern int pieceCol[13];
 extern int piecePwn[13];
 
-//  Conversion array to chars
+//Conversion array to chars
 extern std::string PiceChar;
 extern std::string SideChar;
 
-//  Initialize the conversion arrays
+//Initialize the conversion arrays
 extern void initBoard();
 
+//Set the state of the board as empty
 extern void ResetBoard(BOARD* pos);
 
-//  Prints the conversion from 64 to 120 and vice versa
+//Prints the conversion from 64 to 120 and vice versa
 extern void printBoard();
 
-//  Print the pieces as present on the board
+//Print the pieces as present on the board
 extern void printBoard(BOARD* pos);
 
+//Update evaluation material
 extern void UpdateListMaterial(BOARD* pos);
 
-// assertion utility
+//Assertion utility
 extern bool CheckBoard(const BOARD* pos);
 
+//Parse provided FEN string
 extern void Parse_Fen(BOARD* pos, const std::string Fen);
-
-// convert from 120 to sq (e.g. 21 to A1)
-extern std::string PrSq(const int sq);
-
-// print move in format FsqTsqPr
-extern std::string PrMove(const int move);
 
 #endif

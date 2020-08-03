@@ -17,7 +17,8 @@ void initHash() {
 
 unsigned U64 GeneratePosKey(const BOARD* pos){
   unsigned U64 FinalKey = 0;
-  
+
+//  XOR the pieces
   for(int sq = 0; sq < BRDSQ_120; ++sq) {
     int piece = pos->pieces[sq];
     if(piece != EMPTY && piece != OFF_BOARD && piece != NO_SQ) {
@@ -26,14 +27,17 @@ unsigned U64 GeneratePosKey(const BOARD* pos){
     }
   }
 
+//  XOR the side
   if(pos->side == WHITE)
     FinalKey ^= SideKey;
-  
+
+//  XOR en passant square
   if(pos->enPas != NO_SQ) {
     assert(pos->enPas >= 0 && pos->enPas < BRDSQ_120);
     FinalKey ^= PieceKeys[EMPTY][pos->enPas];
   }
 
+//  XOR castling keys
   assert(pos->castlePerm >= 0 && pos->castlePerm <= 15);
   FinalKey ^= CastleKeys[pos->castlePerm];
 

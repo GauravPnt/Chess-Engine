@@ -9,10 +9,19 @@ int main(int argc, char const *argv[]) {
   BOARD *board = new BOARD;
   MOVE_LIST *list = new MOVE_LIST;
 
-  // Parse_Fen(board, fen);
+  U64 bb = 0ULL;
+  printBitBoard(bb);
+
+  bb |= (1ULL << SQ64(D2));
+  printBitBoard(bb);
+
+  bb |= (1ULL << SQ64(G4));
+  printBitBoard(bb);
+
+//  Parse_Fen(board, fen);
   // GenerateAllMoves(board, list);
 
-  // printBoard(board);
+//  printBoard(board);
   // getchar();
   
   // for(int moveNum = 0; moveNum < list->count; ++moveNum) {
@@ -30,9 +39,9 @@ int main(int argc, char const *argv[]) {
 
   //   getchar();
   // }
-  Parse_Fen(board, fen);
-  GenerateAllMoves(board, list);
+  // Parse_Fen(board, fen);
+  // GenerateAllMoves(board, list);
 
-  test(3, board);
+  // test(3, board);
 
 }

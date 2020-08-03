@@ -11,7 +11,7 @@ set(includes
   movegen.cpp
   validate.cpp
   test.cpp
-)
+    )
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 

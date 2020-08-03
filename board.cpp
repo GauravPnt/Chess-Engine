@@ -18,9 +18,12 @@ int pieceCol[13] = { BOTH, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, BLACK, BLAC
 int piecePwn[13] = { false, true, false, false, false, false, false, true, false, false, false, false, false };
 
 void initBoard() {
+
+//  Initialize with out of board values
   std::fill(Sq120ToSq64, Sq120ToSq64 + BRDSQ_120, 65);
   std::fill(Sq64ToSq120, Sq64ToSq120 + 64, 120);
 
+//  Initialize the files and ranks array with off board values
   std::fill(FilesBrd, FilesBrd + BRDSQ_120, OFF_BOARD);
   std::fill(RanksBrd, RanksBrd + BRDSQ_120, OFF_BOARD);
 
@@ -37,11 +40,15 @@ void initBoard() {
 }
 
 void ResetBoard(BOARD* pos) {
+
+//  Set all the pieces as off board
   std::fill(pos->pieces, pos->pieces + BRDSQ_120, OFF_BOARD);
-  
+
+//  Set the pieces in the 8x8 square as empty
   for(int idx = 0; idx < 64; ++idx)
     pos->pieces[SQ120(idx)] = EMPTY;
 
+//  Empty the arrays
   std::fill(pos->bigPce, pos->bigPce + 2, 0);
   std::fill(pos->majPce, pos->majPce + 2, 0);
   std::fill(pos->minPce, pos->minPce + 2, 0);
@@ -55,7 +62,7 @@ void ResetBoard(BOARD* pos) {
   pos->castlePerm = 0;
   pos->ply = 0;
   pos->hisPly = 0;
-  pos->fiftymove = 0;
+  pos->fifty_move = 0;
   pos->key = 0;
 }
 
@@ -77,9 +84,11 @@ void printBoard() {
   std::cout << '\n' << '\n';
 }
 
-void printBoard(BOARD* pos){
+void printBoard(BOARD* pos) {
+
   std::cout << "BOARD\n\n";
 
+//  Print the board pieces
   for(int rank = RANK_8; rank >= RANK_1; --rank){
     std::cout << std::setw(5) << rank + 1;
     for(int file = FILE_A; file <= FILE_H; ++file){
@@ -96,9 +105,12 @@ void printBoard(BOARD* pos){
     std::cout << std::setw(5) << char(file + 'a');
 
   std::cout << '\n';
+
+//  Print side and en passant square
   std::cout << std::setw(10) << "side : " << SideChar[pos->side] << '\n';
   std::cout << std::setw(10) << "enPas : " << char(FilesBrd[pos->enPas] + 'a') << RanksBrd[pos->enPas] + 1 <<'\n';
 
+//  Print available castling permissions
   std::cout << std::setw(10) << "castle : ";
   std::cout << (pos->castlePerm & WKCA ? 'K' : '-');
   std::cout << (pos->castlePerm & WQCA ? 'Q' : '-');
@@ -107,12 +119,12 @@ void printBoard(BOARD* pos){
 
   std::cout << '\n';
 
+//  Print the 64 bit position key
   std::cout << std::setw(10) << "posKey : " << pos->key;
 
   std::cout << "\n\n";
 }
 
-//  update evaluation material
 void UpdateListMaterial(BOARD* pos) {
   for(int idx = 0; idx < BRDSQ_120; ++idx) {
     int piece = pos->pieces[idx];
@@ -128,13 +140,11 @@ void UpdateListMaterial(BOARD* pos) {
       pos->pList[piece][pos->pceNum[piece]] = idx;
       ++pos->pceNum[piece];
 
-      if(piece == wK) pos->KingSq[color] = idx;
-      if(piece == bK) pos->KingSq[color] = idx;
+      if(piece == wK || piece == bK) pos->KingSq[color] = idx;
     }
   }
 }
 
-//  assertions to check if everything is right
 bool CheckBoard(const BOARD* pos) {
   int t_pceNum[13] = {};
   int t_bigPce[2] = {};
@@ -142,7 +152,7 @@ bool CheckBoard(const BOARD* pos) {
   int t_minPce[2] = {};
   int t_material[2] = {};
 
-  //  check piece list
+//  Check squares in the piece list map to the corresponding pieces in the position of pieces
   for(int t_piece = wP; t_piece <= bK; ++t_piece){
     for(int t_pce_num = 0; t_pce_num < pos->pceNum[t_piece]; ++t_pce_num){
       int sq120 = pos->pList[t_piece][t_pce_num];
@@ -150,7 +160,7 @@ bool CheckBoard(const BOARD* pos) {
     }
   }
 
-  //  check other evaluation improvement arrays
+//  Check material, bigPce, majPce and minPce are correctly set
   for(int sq64 = 0; sq64 < 64; ++sq64){
     int sq120 = SQ120(sq64);
     int t_pce = pos->pieces[sq120];
@@ -171,20 +181,25 @@ bool CheckBoard(const BOARD* pos) {
   assert(t_bigPce[WHITE] == pos->bigPce[WHITE] && t_bigPce[BLACK] == pos->bigPce[BLACK]);
   assert(t_majPce[WHITE] == pos->majPce[WHITE] && t_majPce[BLACK] == pos->majPce[BLACK]);
   assert(t_minPce[WHITE] == pos->minPce[WHITE] && t_minPce[BLACK] == pos->minPce[BLACK]);
-  
+
+//  assert side is valid
   assert(pos->side == WHITE || pos->side == BLACK);
 
+//  Key corresponding to a state should be the same
   if(GeneratePosKey(pos) != pos->key)
     getchar();
   
   assert(GeneratePosKey(pos) == pos->key);
 
+//  En-passant possible only in the 3rd and the 6th rank
   assert(pos->enPas == NO_SQ 
           || (RanksBrd[pos->enPas] == RANK_6 && pos->side == WHITE)
           || (RanksBrd[pos->enPas] == RANK_3 && pos->side == BLACK));
 
+//  Check if the position of the kings are correctly stored
   if(pos->pieces[pos->KingSq[WHITE]] != wK)
     getchar();
+
   assert(pos->pieces[pos->KingSq[WHITE]] == wK);
   assert(pos->pieces[pos->KingSq[BLACK]] == bK);
 

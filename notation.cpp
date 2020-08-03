@@ -78,7 +78,7 @@ void Parse_Fen(BOARD* pos, const std::string Fen) {
   }
 
   ++idx;
-  pos->fiftymove = Fen[++idx] - '0';
+  pos->fifty_move = Fen[++idx] - '0';
   
   ++idx;
   pos->ply = Fen[++idx] - '0';

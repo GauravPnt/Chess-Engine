@@ -116,7 +116,7 @@ bool makeMove(BOARD *pos, int move) {
 
   pos->history[pos->hisPly].key = pos->key;
   pos->history[pos->hisPly].move = move;
-  pos->history[pos->hisPly].fiftymove = pos->fiftymove;
+  pos->history[pos->hisPly].fiftymove = pos->fifty_move;
   pos->history[pos->hisPly].enPas = pos->enPas;
   pos->history[pos->hisPly].castlePerm = pos->castlePerm;
 
@@ -125,7 +125,7 @@ bool makeMove(BOARD *pos, int move) {
       clearPiece(to - 10, pos);
     else
       clearPiece(to + 10, pos);
-  } else if(move & CSFLAG) {
+  } else if(move & CAFLAG) {
     switch(to) {
       case C1 :  movePiece(A1, D1, pos);  break;
       case C8 :  movePiece(A8, D8, pos);  break;
@@ -145,19 +145,19 @@ bool makeMove(BOARD *pos, int move) {
   pos->key ^= CastleKeys[pos->castlePerm];
 
   int captured = CAPTURED(move);
-  ++pos->fiftymove;
+  ++pos->fifty_move;
 
   if(captured != EMPTY) {
     assert(pceValid(captured));
     clearPiece(to, pos);
-    pos->fiftymove = 0;
+    pos->fifty_move = 0;
   }
 
   ++pos->hisPly;
   ++pos->ply;
 
   if(piecePwn[pos->pieces[from]]) {
-    pos->fiftymove = 0;
+    pos->fifty_move = 0;
     if(move & PSFLAG) {
       if(side == WHITE) {
         pos->enPas = from + 10;
@@ -201,7 +201,7 @@ void takeMove(BOARD *pos) {
   --pos->hisPly, --pos->ply;
 
   int move = pos->history[pos->hisPly].move;
-  pos->fiftymove = pos->history[pos->hisPly].fiftymove;
+  pos->fifty_move = pos->history[pos->hisPly].fiftymove;
   pos->castlePerm = pos->history[pos->hisPly].castlePerm;
   pos->enPas = pos->history[pos->hisPly].enPas;
   int from = FROMSQ(move);
@@ -217,7 +217,7 @@ void takeMove(BOARD *pos) {
       addPiece(to - 10, pos, bP);
     else
       addPiece(to + 10, pos, wP);
-  } else if(CSFLAG & move) {
+  } else if(CAFLAG & move) {
     switch(to) {
       case C1 :  movePiece(D1, A1, pos);  break;
       case C8 :  movePiece(D8, A8, pos);  break;
