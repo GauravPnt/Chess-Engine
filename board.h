@@ -67,6 +67,7 @@ typedef struct {
   int enPas;
 
   int ply;
+//  history ply
   int hisPly;
   int fifty_move;
   unsigned U64 key;

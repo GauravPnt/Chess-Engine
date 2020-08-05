@@ -16,6 +16,7 @@ bool isSqAttacked(const int sq, const int side, const BOARD* pos) {
   assert(CheckBoard(pos));
 #endif
 
+
 //  Is square attacked by pawn
   if (side == WHITE) {
     if (pos->pieces[sq - 11] == wP || pos->pieces[sq - 9] == wP) {
@@ -27,7 +28,7 @@ bool isSqAttacked(const int sq, const int side, const BOARD* pos) {
     }
   }
 
-//  Is square attacked by knights
+//  Is square attacked by knight
   for (int move : NMov) {
     int pce = pos->pieces[sq + move];
     if (isN(pce) && pieceCol[pce] == side)

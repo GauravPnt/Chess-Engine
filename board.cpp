@@ -156,6 +156,7 @@ bool CheckBoard(const BOARD* pos) {
   for(int t_piece = wP; t_piece <= bK; ++t_piece){
     for(int t_pce_num = 0; t_pce_num < pos->pceNum[t_piece]; ++t_pce_num){
       int sq120 = pos->pList[t_piece][t_pce_num];
+//      std::cout << sq120 << ' ' << t_piece << ' ' << pos->pieces[sq120] << '\n';
       assert(pos->pieces[sq120] == t_piece);
     }
   }

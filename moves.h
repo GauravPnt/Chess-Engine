@@ -22,15 +22,15 @@
 #define isQ(pce) ((pce) == wQ || (pce) == bQ)
 #define isK(pce) ((pce) == wK || (pce) == bK)
 
-//Check flags for en passant, pawn start, capture flag
+//Check flags for en passant, pawn start, castling
 #define EPFLAG 0x40000
 #define PSFLAG 0x80000
-#define CAFLAG 0x1000000
+#define CSFLAG 0x1000000
 
 #define MAXPOSITIONMOVES 256
 
-//Convert from, to, captured, promoted, pawn start to move int
-#define MOVE(f, t, ca, pro, ps) ((f) | ((t) << 7) | ((ca) << 14) | ((pro) << 20) | (ps))
+//Convert from, to, captured, promoted, flag(above) to move int
+#define MOVE(f, t, ca, pro, fl) ((f) | ((t) << 7) | ((ca) << 14) | ((pro) << 20) | (fl))
 //Check if the square is off board
 #define SQOFFBOARD(sq) (FilesBrd[(sq)] == OFF_BOARD)
 
