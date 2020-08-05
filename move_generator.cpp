@@ -1,4 +1,4 @@
-#include"moves.h"
+#include"move.h"
 
 const int SlidePieces[2][3] = {{wB, wR, wQ}, {bB, bR, bQ}};
 const int NonSlidePce[2][2] = {{wN, wK}, {bN, bK}};

@@ -8,11 +8,11 @@ set(
     hash.cpp
     attack.cpp
     notation.cpp
-    moves.cpp
-    movegen.cpp
+    move_generator.cpp
+    move_maker.cpp
     validate.cpp
     test.cpp
-)
+    search.cpp search.h)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 

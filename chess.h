@@ -3,7 +3,7 @@
 
 #include"hash.h"
 #include"board.h"
-#include"moves.h"
+#include"move.h"
 #include"test.h"
 #include"validate.h"
 

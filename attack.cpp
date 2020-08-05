@@ -1,4 +1,4 @@
-#include"moves.h"
+#include"move.h"
 
 const int PMov[2][2] = {{10, 20}, {-10, -20}};
 const int PAttack[2][2] = {{9, 11}, {-9, -11}};

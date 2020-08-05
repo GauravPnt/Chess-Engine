@@ -1,4 +1,4 @@
-#include"moves.h"
+#include"move.h"
 #include"hash.h"
 
 static void clearPiece(const int sq, BOARD *pos) {

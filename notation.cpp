@@ -1,5 +1,5 @@
 #include"hash.h"
-#include"moves.h"
+#include"move.h"
 
 const std::string START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
