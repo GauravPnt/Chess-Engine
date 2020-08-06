@@ -1,4 +1,4 @@
-#include"hash.h"
+#include"hash.hpp"
 
 unsigned U64 PieceKeys[13][120];
 unsigned U64 SideKey;
@@ -15,7 +15,7 @@ void initHash() {
     CastleKeys[key] = RAND_64;  
 }
 
-unsigned U64 GeneratePosKey(const BOARD* pos){
+unsigned U64 GeneratePosKey(std::shared_ptr<const BOARD> pos){
   unsigned U64 FinalKey = 0;
 
 //  XOR the pieces

@@ -1,5 +1,6 @@
-#include"board.h"
-#include"hash.h"
+#include"board.hpp"
+#include"hash.hpp"
+#include<chrono>
 
 int Sq120ToSq64[BRDSQ_120];
 int Sq64ToSq120[64];
@@ -16,6 +17,12 @@ int pieceMin[13] = { false, false, true, true, false, false, false, false, true,
 int pieceVal[13] = { 0, 100, 325, 325, 550, 1000, 50000, 100, 325, 325, 550, 1000, 50000 };
 int pieceCol[13] = { BOTH, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK };
 int piecePwn[13] = { false, true, false, false, false, false, false, true, false, false, false, false, false };
+
+BOARD::BOARD() {
+  PvTable = std::make_shared<PVTABLE>(PvSize);
+  initBoard();
+  initHash();
+}
 
 void initBoard() {
 
@@ -39,7 +46,7 @@ void initBoard() {
   }
 }
 
-void ResetBoard(BOARD* pos) {
+void ResetBoard(std::shared_ptr<BOARD> pos) {
 
 //  Set all the pieces as off board
   std::fill(pos->pieces, pos->pieces + BRDSQ_120, OFF_BOARD);
@@ -84,7 +91,7 @@ void printBoard() {
   std::cout << '\n' << '\n';
 }
 
-void printBoard(BOARD* pos) {
+void printBoard(std::shared_ptr<BOARD> pos) {
 
   std::cout << "BOARD\n\n";
 
@@ -125,7 +132,7 @@ void printBoard(BOARD* pos) {
   std::cout << "\n\n";
 }
 
-void UpdateListMaterial(BOARD* pos) {
+void UpdateListMaterial(std::shared_ptr<BOARD> pos) {
   for(int idx = 0; idx < BRDSQ_120; ++idx) {
     int piece = pos->pieces[idx];
     if(piece != OFF_BOARD && piece != EMPTY) {
@@ -145,7 +152,7 @@ void UpdateListMaterial(BOARD* pos) {
   }
 }
 
-bool CheckBoard(const BOARD* pos) {
+bool CheckBoard(std::shared_ptr<const BOARD> pos) {
   int t_pceNum[13] = {};
   int t_bigPce[2] = {};
   int t_majPce[2] = {};
@@ -205,4 +212,9 @@ bool CheckBoard(const BOARD* pos) {
   assert(pos->pieces[pos->KingSq[BLACK]] == bK);
 
   return true;
+}
+
+unsigned U64 GetTime() {
+  auto now = std::chrono::system_clock::now().time_since_epoch();
+  return std::chrono::duration_cast<std::chrono::milliseconds>(now).count();
 }

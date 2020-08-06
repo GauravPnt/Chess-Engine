@@ -1,7 +1,7 @@
 #ifndef VALIDATE_H
 #define VALIDATE_H
 
-#include"board.h"
+#include"board.hpp"
 
 //Check if the square is on board
 extern bool onBoard(const int sq);

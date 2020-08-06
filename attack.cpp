@@ -1,4 +1,4 @@
-#include"move.h"
+#include"move.hpp"
 
 const int PMov[2][2] = {{10, 20}, {-10, -20}};
 const int PAttack[2][2] = {{9, 11}, {-9, -11}};
@@ -8,7 +8,7 @@ const int BMov[4] = {-9, -11, 11, 9};
 const int RMov[4] = {-1, -10, 1, 10};
 const int KMov[8] = {-1, -10, 1, 10, -9, -11, 11, 9};
 
-bool isSqAttacked(const int sq, const int side, const BOARD* pos) {
+bool isSqAttacked(const int sq, const int side, std::shared_ptr<const BOARD> pos) {
 
 #ifdef DEBUG
   assert(onBoard(sq));

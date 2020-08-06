@@ -1,7 +1,7 @@
-#include"move.h"
-#include"hash.h"
+#include"move.hpp"
+#include"hash.hpp"
 
-static void clearPiece(const int sq, BOARD *pos) {
+static void clearPiece(const int sq, std::shared_ptr<BOARD> pos) {
   assert(onBoard(sq));
 
   int pce = pos->pieces[sq];
@@ -42,7 +42,7 @@ static void clearPiece(const int sq, BOARD *pos) {
 //  std::cout << "Piece cleared at: " << sq << '\n';
 }
 
-static void addPiece(const int sq, BOARD *pos, const int pce) {
+static void addPiece(const int sq, std::shared_ptr<BOARD> pos, const int pce) {
   assert(onBoard(sq));
   assert(pceValid(pce));
 
@@ -69,7 +69,7 @@ static void addPiece(const int sq, BOARD *pos, const int pce) {
   pos->pList[pce][pos->pceNum[pce] - 1] = sq;
 }
 
-static void movePiece(const int from, const int to, BOARD *pos) {
+static void movePiece(const int from, const int to, std::shared_ptr<BOARD> pos) {
   assert(from != OFF_BOARD && to != OFF_BOARD);
 
   int pce = pos->pieces[from];
@@ -113,7 +113,7 @@ static int castlePerm(int sq) {
   }
 }
 
-bool makeMove(BOARD *pos, int move) {
+bool makeMove(std::shared_ptr<BOARD> pos, int move) {
 //std::cout << PrMove(move) << std::endl;
 //  std::cout << "Make move" << std::endl;
 #ifdef DEBUG
@@ -235,7 +235,7 @@ bool makeMove(BOARD *pos, int move) {
   return true;
 }
 
-void takeMove(BOARD *pos) {
+void takeMove(std::shared_ptr<BOARD> pos) {
 
 //  std::cout << "Take move" << std::endl;
 #ifdef DEBUG

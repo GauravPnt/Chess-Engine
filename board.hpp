@@ -16,7 +16,7 @@
 #include<algorithm>
 #include<iostream>
 #include<iomanip>
-
+#include<memory>
 #include<assert.h>
 
 //Sides
@@ -44,51 +44,68 @@ enum { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H };
 //Castling bit enums
 enum { WKCA = 1, WQCA = 2, BKCA = 4, BQCA = 8};
 
+extern const int PvSize;
+
+//Principal variation table entry
+struct PVENTRY {
+  unsigned U64 key = {};
+  int move = {};
+};
+
+//Principal Variation Table
+struct PVTABLE {
+  std::unique_ptr<PVENTRY[]> PvTable = {};
+  U64 numEntries = {};
+  PVTABLE(const int PvSize);
+};
 
 //Undo move structure
-typedef struct {
-  int move;
-  int castlePerm;
-  int fiftymove;
-  int enPas;
-  unsigned U64 key;
-} UNDO;
+struct UNDO {
+  int move = {};
+  int castlePerm = {};
+  int fiftymove = {};
+  int enPas = {};
+  unsigned U64 key = {};
+};
 
 //Board state representation
-typedef struct {
-
+struct BOARD {
 //  Board position to pieces mapping
-  int pieces[BRDSQ_120];
+  int pieces[BRDSQ_120] = {};
 //  Side of the current player
-  int side;
+  int side = {};
 //  Castle permission bit
-  int castlePerm;
+  int castlePerm = {};
 //  Store the en-passant square, one before the played pawn
-  int enPas;
+  int enPas = {};
 
-  int ply;
+  int ply = {};
 //  history ply
-  int hisPly;
-  int fifty_move;
-  unsigned U64 key;
+  int hisPly = {};
+  int fifty_move = {};
+  unsigned U64 key = {};
 
 //  Holds kings square
-  int KingSq[2];
+  int KingSq[2] = {};
 //  Count of all pieces
-  int pceNum[13];
+  int pceNum[13] = {};
 //  Count of all the big pieces
-  int bigPce[2];
+  int bigPce[2] = {};
 //  Count of all the major pieces : rook, queen
-  int majPce[2];
+  int majPce[2] = {};
 //  Count of all the minor pieces : knight, bishop
-  int minPce[2];
+  int minPce[2] = {};
 //  material of the two sides
-  int material[2];
+  int material[2] = {};
 
   UNDO history[MAX_MOVES];
 //  mapping from all pieces to the 120 board
-  int pList[13][10];
-} BOARD;
+  int pList[13][10] = {};
+//Principal Variation Table
+  std::shared_ptr<PVTABLE> PvTable;
+
+  BOARD();
+};
 
 //Conversion utility
 extern int Sq120ToSq64[BRDSQ_120];
@@ -114,21 +131,27 @@ extern std::string SideChar;
 extern void initBoard();
 
 //Set the state of the board as empty
-extern void ResetBoard(BOARD* pos);
+extern void ResetBoard(std::shared_ptr<BOARD> pos);
 
 //Prints the conversion from 64 to 120 and vice versa
 extern void printBoard();
 
 //Print the pieces as present on the board
-extern void printBoard(BOARD* pos);
+extern void printBoard(std::shared_ptr<BOARD> pos);
 
 //Update evaluation material
-extern void UpdateListMaterial(BOARD* pos);
+extern void UpdateListMaterial(std::shared_ptr<BOARD> pos);
 
 //Assertion utility
-extern bool CheckBoard(const BOARD* pos);
+extern bool CheckBoard(std::shared_ptr<const BOARD> pos);
 
 //Parse provided FEN string
-extern void Parse_Fen(BOARD* pos, const std::string Fen);
+extern void ParseFen(std::shared_ptr<BOARD> pos, const std::string fen);
+
+//Parse input move
+extern int ParseMove(std::shared_ptr<const BOARD> pos, std::string input);
+
+//Get time since epoch
+extern unsigned U64 GetTime();
 
 #endif

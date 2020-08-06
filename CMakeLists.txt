@@ -12,7 +12,7 @@ set(
     move_maker.cpp
     validate.cpp
     test.cpp
-    search.cpp search.h)
+    search.cpp search.hpp pvtable.cpp)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 

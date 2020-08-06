@@ -1,4 +1,4 @@
-#include"validate.h"
+#include"validate.hpp"
 
 bool onBoard(const int sq) {
   return FilesBrd[sq] != OFF_BOARD;
