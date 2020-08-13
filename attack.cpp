@@ -8,11 +8,11 @@ const int BMov[4] = {-9, -11, 11, 9};
 const int RMov[4] = {-1, -10, 1, 10};
 const int KMov[8] = {-1, -10, 1, 10, -9, -11, 11, 9};
 
-bool isSqAttacked(const int sq, const int side, std::shared_ptr<const BOARD> pos) {
+bool IsSqAttacked(const int sq, const int side, std::shared_ptr<const BOARD> pos) {
 
 #ifdef DEBUG
-  assert(onBoard(sq));
-  assert(sideValid(side));
+  assert(OnBoard(sq));
+  assert(SideValid(side));
   assert(CheckBoard(pos));
 #endif
 

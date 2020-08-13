@@ -19,12 +19,13 @@ int pieceCol[13] = { BOTH, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, BLACK, BLAC
 int piecePwn[13] = { false, true, false, false, false, false, false, true, false, false, false, false, false };
 
 BOARD::BOARD() {
-  PvTable = std::make_shared<PVTABLE>(PvSize);
-  initBoard();
+  PvTable = std::make_unique<PVTABLE>(PVTABLE(PvSize));
+  PvArray = std::unique_ptr<int[]>(new int[MAXDEPTH]);
+  InitBoard();
   initHash();
 }
 
-void initBoard() {
+void InitBoard() {
 
 //  Initialize with out of board values
   std::fill(Sq120ToSq64, Sq120ToSq64 + BRDSQ_120, 65);
@@ -73,7 +74,7 @@ void ResetBoard(std::shared_ptr<BOARD> pos) {
   pos->key = 0;
 }
 
-void printBoard() {
+void PrintBoard() {
   for (int i = 0; i < BRDSQ_120; ++i) {
     if (i % 10 == 0) 
       std::cout << '\n';
@@ -91,7 +92,7 @@ void printBoard() {
   std::cout << '\n' << '\n';
 }
 
-void printBoard(std::shared_ptr<BOARD> pos) {
+void PrintBoard(std::shared_ptr<BOARD> pos) {
 
   std::cout << "BOARD\n\n";
 

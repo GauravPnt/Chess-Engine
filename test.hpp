@@ -4,7 +4,7 @@
 #include"board.hpp"
 #include"move.hpp"
 
-static void test_util(int depth, std::shared_ptr<BOARD> pos);
-extern void test(int depth, std::shared_ptr<BOARD> pos);
+static void TestUtil(int depth, std::shared_ptr<BOARD> pos);
+extern void Test(int depth, std::shared_ptr<BOARD> pos);
 
 #endif

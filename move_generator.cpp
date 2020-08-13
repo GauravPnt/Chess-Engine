@@ -45,10 +45,10 @@ static void AddEnPassantMove(int move, std::shared_ptr<MOVE_LIST> list) {
 
 static void AddPawnMove(std::shared_ptr<const BOARD> pos, const int from, const int to, const int cap, const int side,
                         std::shared_ptr<MOVE_LIST> list) {
-  assert(sideValid(side));
-  assert(onBoard(from));
-  assert(onBoard(to));
-  assert(pceValidEmpty(cap));
+  assert(SideValid(side));
+  assert(OnBoard(from));
+  assert(OnBoard(to));
+  assert(PceValidEmpty(cap));
 
   if(side == WHITE) {
     if(RanksBrd[from] == RANK_7) {
@@ -69,9 +69,9 @@ static void AddPawnMove(std::shared_ptr<const BOARD> pos, const int from, const 
 
 static void AddPawnMove(std::shared_ptr<const BOARD> pos, const int from, const int to, const int side,
                         std::shared_ptr<MOVE_LIST> list) {
-  assert(sideValid(side));
-  assert(onBoard(from));
-  assert(onBoard(to));
+  assert(SideValid(side));
+  assert(OnBoard(from));
+  assert(OnBoard(to));
 
   if(side == WHITE) {
     if(RanksBrd[from] == RANK_7) {
@@ -101,14 +101,14 @@ void GenerateAllMoves(std::shared_ptr<const BOARD> pos, std::shared_ptr<MOVE_LIS
   int pce = EMPTY;
   int side = pos->side;
 
-  assert(sideValid(side));
+  assert(SideValid(side));
 
   if(side == WHITE) {
 
 //    Loop through all the pawns on the board
     for(int pceNum = 0; pceNum < pos->pceNum[wP]; ++pceNum) {
       int sq = pos->pList[wP][pceNum];
-      assert(onBoard(sq));
+      assert(OnBoard(sq));
 
 //      1 step pawn move
       if(pos->pieces[sq + PMov[WHITE][0]] == EMPTY) {
@@ -130,8 +130,8 @@ void GenerateAllMoves(std::shared_ptr<const BOARD> pos, std::shared_ptr<MOVE_LIS
 //    King side castle
     if(pos->castlePerm & WKCA) {
       if(pos->pieces[F1] == EMPTY && pos->pieces[G1] == EMPTY) {
-        if(!isSqAttacked(E1, BLACK, pos) &&
-            !isSqAttacked(F1, BLACK, pos) && !isSqAttacked(G1, BLACK, pos))
+        if(!IsSqAttacked(E1, BLACK, pos) &&
+           !IsSqAttacked(F1, BLACK, pos) && !IsSqAttacked(G1, BLACK, pos))
           AddQuietMove(MOVE(E1, G1, EMPTY, EMPTY, CSFLAG), list);
       }
     }
@@ -139,7 +139,7 @@ void GenerateAllMoves(std::shared_ptr<const BOARD> pos, std::shared_ptr<MOVE_LIS
 //    Queen side castle
     if(pos->castlePerm & WQCA) {
       if(pos->pieces[D1] == EMPTY && pos->pieces[C1] == EMPTY && pos->pieces[B1] == EMPTY)
-        if(!isSqAttacked(E1, BLACK, pos) && !isSqAttacked(D1, BLACK, pos))
+        if(!IsSqAttacked(E1, BLACK, pos) && !IsSqAttacked(D1, BLACK, pos))
           AddQuietMove(MOVE(E1, C1, EMPTY, EMPTY, CSFLAG), list);
     }
 
@@ -148,7 +148,7 @@ void GenerateAllMoves(std::shared_ptr<const BOARD> pos, std::shared_ptr<MOVE_LIS
 //    Loop through all the pawns on the board
     for(int pceNum = 0; pceNum < pos->pceNum[bP]; ++pceNum) {
       int sq = pos->pList[bP][pceNum];
-      assert(onBoard(sq));
+      assert(OnBoard(sq));
 
 //      1 step pawn move
       if(pos->pieces[sq + PMov[BLACK][0]] == EMPTY) {
@@ -171,7 +171,7 @@ void GenerateAllMoves(std::shared_ptr<const BOARD> pos, std::shared_ptr<MOVE_LIS
 //    King side castle
     if(pos->castlePerm & BKCA) {
       if(pos->pieces[F8] == EMPTY && pos->pieces[G8] == EMPTY) {
-        if(!isSqAttacked(E8, WHITE, pos) && !isSqAttacked(F8, WHITE, pos))
+        if(!IsSqAttacked(E8, WHITE, pos) && !IsSqAttacked(F8, WHITE, pos))
           AddQuietMove(MOVE(E8, G8, EMPTY, EMPTY, CSFLAG), list);
       }
     }
@@ -179,7 +179,7 @@ void GenerateAllMoves(std::shared_ptr<const BOARD> pos, std::shared_ptr<MOVE_LIS
 //    Queen side castle
     if(pos->castlePerm & BQCA) {
       if(pos->pieces[D8] == EMPTY && pos->pieces[C8] == EMPTY && pos->pieces[B8] == EMPTY)
-        if(!isSqAttacked(E8, WHITE, pos) && !isSqAttacked(D8, WHITE, pos))
+        if(!IsSqAttacked(E8, WHITE, pos) && !IsSqAttacked(D8, WHITE, pos))
           AddQuietMove(MOVE(E8, C8, EMPTY, EMPTY, CSFLAG), list);
     }
   }
@@ -189,7 +189,7 @@ void GenerateAllMoves(std::shared_ptr<const BOARD> pos, std::shared_ptr<MOVE_LIS
     int pce = NonSlidePce[side][idx];
     for(int pceNum = 0; pceNum < pos->pceNum[pce]; ++pceNum) {
       int sq = pos->pList[pce][pceNum];
-      assert(onBoard(sq));
+      assert(OnBoard(sq));
       for(int inc = 0; inc < 8; ++inc) {
         int to = sq + Mov[pce][inc];
         if(SQOFFBOARD(to))
@@ -207,7 +207,7 @@ void GenerateAllMoves(std::shared_ptr<const BOARD> pos, std::shared_ptr<MOVE_LIS
     int pce = SlidePieces[side][idx];
     for(int pceNum = 0; pceNum < pos->pceNum[pce]; ++pceNum) {
       int sq = pos->pList[pce][pceNum];
-      assert(onBoard(sq));
+      assert(OnBoard(sq));
       int limit = 4;
       if(isQ(pce))
         limit = 8;

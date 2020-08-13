@@ -6,27 +6,43 @@ int main(int argc, char const *argv[]) {
 
 //  PVTABLE p;
   std::shared_ptr<BOARD> b(new BOARD);
-//
-//  ParseFen(b, fen);
-//  printBoard(b);
-//
-//  test(3,b);
 
-//  while(true) {
-//    std::cout << "Enter a move > ";
-//    std::string input;
-//    std::cin >> input;
-//    if(input == "q")
-//      break;
-//    int move = ParseMove(b, input);
-//    if(move == NOMOVE) {
-//      std::cout << "Invalid move" << std::endl;
-//      continue;
-//    }
-//    if(!makeMove(b, move)) {
-//      std::cout << "Infeasible move" << std::endl;
-//      continue;
-//    }
-//    printBoard(b);
-//  }
+  ParseFen(b, START_FEN);
+  PrintBoard(b);
+
+//  Test(3,b);
+
+  while(true) {
+    std::cout << "Enter a move > ";
+    std::string input;
+    std::cin >> input;
+    if(input == "q")
+      break;
+    else if(input == "t") {
+      TakeMove(b);
+      PrintBoard(b);
+    }
+    else if(input == "p") {
+      int count = GetPvLine(4, b);
+      for(int idx = 0; idx < count; ++idx) {
+        int move = b->PvArray[idx];
+        std::cout << PrMove(move) << ' ';
+      }
+      std::cout << std::endl;
+    } else {
+      int move = ParseMove(b, input);
+      if (move == NOMOVE) {
+        std::cout << "Invalid move" << std::endl;
+        continue;
+      } else {
+        StorePvMove(b, move);
+        if(!MakeMove(b, move)) {
+          std::cout << "Infeasible move" << std::endl;
+          continue;
+        }
+      }
+      StorePvMove(b, move);
+      PrintBoard(b);
+    }
+  }
 }

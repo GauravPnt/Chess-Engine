@@ -1,12 +1,12 @@
 #include"move.hpp"
 #include"hash.hpp"
 
-static void clearPiece(const int sq, std::shared_ptr<BOARD> pos) {
-  assert(onBoard(sq));
+static void ClearPiece(const int sq, std::shared_ptr<BOARD> pos) {
+  assert(OnBoard(sq));
 
   int pce = pos->pieces[sq];
 
-  assert(pceValid(pce));
+  assert(PceValid(pce));
 
   int color = pieceCol[pce];
   int t_pceNum = -1;
@@ -42,9 +42,9 @@ static void clearPiece(const int sq, std::shared_ptr<BOARD> pos) {
 //  std::cout << "Piece cleared at: " << sq << '\n';
 }
 
-static void addPiece(const int sq, std::shared_ptr<BOARD> pos, const int pce) {
-  assert(onBoard(sq));
-  assert(pceValid(pce));
+static void AddPiece(const int sq, std::shared_ptr<BOARD> pos, const int pce) {
+  assert(OnBoard(sq));
+  assert(PceValid(pce));
 
   int color = pieceCol[pce];
 
@@ -69,16 +69,16 @@ static void addPiece(const int sq, std::shared_ptr<BOARD> pos, const int pce) {
   pos->pList[pce][pos->pceNum[pce] - 1] = sq;
 }
 
-static void movePiece(const int from, const int to, std::shared_ptr<BOARD> pos) {
+static void MovePiece(const int from, const int to, std::shared_ptr<BOARD> pos) {
   assert(from != OFF_BOARD && to != OFF_BOARD);
 
   int pce = pos->pieces[from];
 
-  if(!pceValid(pce))
+  if(!PceValid(pce))
     getchar();
 
 //  std::cout << PrSq(from) << ' ' << PrSq(to) << ' ' << pce << std::endl;
-  assert(pceValid(pce));
+  assert(PceValid(pce));
 
 //  Remove the piece from the from square
   pos->key ^= PieceKeys[pce][from];
@@ -101,7 +101,7 @@ static void movePiece(const int from, const int to, std::shared_ptr<BOARD> pos) 
   assert(t_idx != -1);
 }
 
-static int castlePerm(int sq) {
+static int CastlePerm(int sq) {
   switch(sq) {
     case E1 : return 12;
     case E8 : return 3;
@@ -113,7 +113,7 @@ static int castlePerm(int sq) {
   }
 }
 
-bool makeMove(std::shared_ptr<BOARD> pos, int move) {
+bool MakeMove(std::shared_ptr<BOARD> pos, int move) {
 //std::cout << PrMove(move) << std::endl;
 //  std::cout << "Make move" << std::endl;
 #ifdef DEBUG
@@ -126,8 +126,8 @@ bool makeMove(std::shared_ptr<BOARD> pos, int move) {
 
   assert(from != OFF_BOARD);
   assert(to != OFF_BOARD);
-  assert(sideValid(side));
-  assert(onBoard(from));
+  assert(SideValid(side));
+  assert(OnBoard(from));
 
 //  Store current move in history array
   pos->history[pos->hisPly].key = pos->key;
@@ -139,16 +139,20 @@ bool makeMove(std::shared_ptr<BOARD> pos, int move) {
 //  If en passant flag is set then clear the attacked pawn
   if(move & EPFLAG) {
     if(side == WHITE)
-      clearPiece(to - 10, pos);
+      ClearPiece(to - 10, pos);
     else
-      clearPiece(to + 10, pos);
+      ClearPiece(to + 10, pos);
   } else if(move & CSFLAG) {
 //    If castling move than move the corresponding rooks
     switch(to) {
-      case C1 :  movePiece(A1, D1, pos);  break;
-      case C8 :  movePiece(A8, D8, pos);  break;
-      case G1 :  movePiece(H1, F1, pos);  break;
-      case G8 :  movePiece(H8, F8, pos);  break;
+      case C1 :
+        MovePiece(A1, D1, pos);  break;
+      case C8 :
+        MovePiece(A8, D8, pos);  break;
+      case G1 :
+        MovePiece(H1, F1, pos);  break;
+      case G8 :
+        MovePiece(H8, F8, pos);  break;
       default :  assert(false);
     } 
   }
@@ -159,8 +163,8 @@ bool makeMove(std::shared_ptr<BOARD> pos, int move) {
   pos->key ^= CastleKeys[pos->castlePerm];
 
 //  unset the castling permission if the move is from or to one of the special squares
-  pos->castlePerm &= castlePerm(from);
-  pos->castlePerm &= castlePerm(to);
+  pos->castlePerm &= CastlePerm(from);
+  pos->castlePerm &= CastlePerm(to);
   pos->enPas = NO_SQ;
 
 //  Set the castling permission to the key
@@ -171,9 +175,9 @@ bool makeMove(std::shared_ptr<BOARD> pos, int move) {
   ++pos->fifty_move;
 
   if(captured != EMPTY) {
-    assert(pceValid(captured));
+    assert(PceValid(captured));
 //    Clear the piece on the to square if its captured
-    clearPiece(to, pos);
+    ClearPiece(to, pos);
 //    Fifty move resets on capture
     pos->fifty_move = 0;
   }
@@ -200,16 +204,16 @@ bool makeMove(std::shared_ptr<BOARD> pos, int move) {
   }
 
 //  Move the piece
-  movePiece(from, to, pos);
+  MovePiece(from, to, pos);
 
 //  Get promoted piece
   int prPce = PROMOTED(move);
   if(prPce != EMPTY) {
-    assert(pceValid(prPce));
+    assert(PceValid(prPce));
 //    Clear the promoted pawn
-    clearPiece(to, pos);
+    ClearPiece(to, pos);
 //    Add the promoted piece
-    addPiece(to, pos, prPce);
+    AddPiece(to, pos, prPce);
   }
 
 //  Update king square if the piece is a king
@@ -223,11 +227,11 @@ bool makeMove(std::shared_ptr<BOARD> pos, int move) {
 
 //  std::cout << "Move processed" << std::endl;
 
-//  printBoard(pos);
+//  PrintBoard(pos);
 //  If after making the move, the king square is attacked, then undo this move
-  if(isSqAttacked(pos->KingSq[side], pos->side, pos)) {
+  if(IsSqAttacked(pos->KingSq[side], pos->side, pos)) {
 //    std::cout << "King attacked" << std::endl;
-    takeMove(pos);
+    TakeMove(pos);
     return false;
   }
 
@@ -235,7 +239,7 @@ bool makeMove(std::shared_ptr<BOARD> pos, int move) {
   return true;
 }
 
-void takeMove(std::shared_ptr<BOARD> pos) {
+void TakeMove(std::shared_ptr<BOARD> pos) {
 
 //  std::cout << "Take move" << std::endl;
 #ifdef DEBUG
@@ -254,8 +258,8 @@ void takeMove(std::shared_ptr<BOARD> pos) {
   int to = TOSQ(move);
 
 //  std::cout << PrSq(to) << PrSq(from) << std::endl;
-  assert(onBoard(from));
-  assert(onBoard(to));
+  assert(OnBoard(from));
+  assert(OnBoard(to));
 
 //  Switch sides
   pos->side ^= 1;
@@ -263,22 +267,26 @@ void takeMove(std::shared_ptr<BOARD> pos) {
 //  Add pieces back if en passant flag is set
   if(move & EPFLAG) {
     if(pos->side == WHITE)
-      addPiece(to - 10, pos, bP);
+      AddPiece(to - 10, pos, bP);
     else
-      addPiece(to + 10, pos, wP);
+      AddPiece(to + 10, pos, wP);
   } else if(CSFLAG & move) {
 //    Put rooks back to their position if the castling flag is set
     switch(to) {
-      case C1 :  movePiece(D1, A1, pos);  break;
-      case C8 :  movePiece(D8, A8, pos);  break;
-      case G1 :  movePiece(F1, H1, pos);  break;
-      case G8 :  movePiece(F8, H8, pos);  break;
+      case C1 :
+        MovePiece(D1, A1, pos);  break;
+      case C8 :
+        MovePiece(D8, A8, pos);  break;
+      case G1 :
+        MovePiece(F1, H1, pos);  break;
+      case G8 :
+        MovePiece(F8, H8, pos);  break;
       default :  assert(false); break;
     }
   }
 
 //  Move the piece from the to to from square
-  movePiece(to, from, pos);
+  MovePiece(to, from, pos);
 
 //  If it is a king then update the kings square
   if(isK(pos->pieces[from]))
@@ -287,19 +295,19 @@ void takeMove(std::shared_ptr<BOARD> pos) {
 //  Check if there was any captures in this move
   int captured = CAPTURED(move);
   if(captured != EMPTY) {
-    assert(pceValid(captured));
+    assert(PceValid(captured));
 //    Add captured piece back to the board
-    addPiece(to, pos, captured);
+    AddPiece(to, pos, captured);
   }
 
 //  Check if there was any promoted piece in this move
   int prPce = PROMOTED(move);
   if(prPce != EMPTY) {
-    assert(pceValid(prPce) && !piecePwn[prPce]);
+    assert(PceValid(prPce) && !piecePwn[prPce]);
 //    Clear the promoted piece, piece has moved backwards therefore clear from from
-    clearPiece(from, pos);
+    ClearPiece(from, pos);
 //    Add the promoted pawn back
-    addPiece(from, pos, pieceCol[prPce] == WHITE ? wP : bP);
+    AddPiece(from, pos, pieceCol[prPce] == WHITE ? wP : bP);
   }
 
 //  Get back the history key
@@ -308,5 +316,5 @@ void takeMove(std::shared_ptr<BOARD> pos) {
 #ifdef DEBUG
   assert(CheckBoard(pos));
 #endif
-//  printBoard(pos);
+//  PrintBoard(pos);
 }

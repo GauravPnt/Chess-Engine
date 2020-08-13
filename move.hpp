@@ -85,7 +85,7 @@ extern std::string PrMove(const int move);
 void PrintMoveList(std::shared_ptr<const MOVE_LIST> list);
 
 //Check if the current square is attacked by side
-extern bool isSqAttacked(const int sq, const int side, std::shared_ptr<const BOARD> pos);
+extern bool IsSqAttacked(const int sq, const int side, std::shared_ptr<const BOARD> pos);
 
 /****************** MOVE TYPES *******************
  * Quiet
@@ -110,27 +110,31 @@ static void AddPawnMove(std::shared_ptr<const BOARD> pos, const int from, const 
 extern void GenerateAllMoves(std::shared_ptr<const BOARD> pos, std::shared_ptr<MOVE_LIST> list);
 
 //Clear the piece, update key, material, minPce, majPce, bigPce, pList, pieces, pceNum
-static void clearPiece(const int sq, std::shared_ptr<BOARD> pos);
+static void ClearPiece(const int sq, std::shared_ptr<BOARD> pos);
 
 //Add piece, update key, material, majPce, minPce, bigPce, pList, pieces, pceNum
-static void addPiece(const int sq, std::shared_ptr<BOARD> pos, const int pce);
+static void AddPiece(const int sq, std::shared_ptr<BOARD> pos, const int pce);
 
 //Move piece, update key, pList, pieces
-static void movePiece(const int from, const int to, std::shared_ptr<BOARD> pos);
+static void MovePiece(const int from, const int to, std::shared_ptr<BOARD> pos);
 
-//Values of castlePerm for each sq
-static int castlePerm(int sq);
+//Values of CastlePerm for each sq
+static int CastlePerm(int sq);
 
 //Takes move and updates the board structure
-extern bool makeMove(std::shared_ptr<BOARD> pos, int move);
+extern bool MakeMove(std::shared_ptr<BOARD> pos, int move);
 
 //Undo a move
-extern void takeMove(std::shared_ptr<BOARD> pos);
+extern void TakeMove(std::shared_ptr<BOARD> pos);
 
 //Store principal variation move
 extern void StorePvMove(std::shared_ptr<BOARD> pos, const int move);
+//Check if given move exists for the position
+extern bool MoveExists(std::shared_ptr<BOARD> pos, const int move);
 
 //Retrieve principal variation move
 extern int ProbePvTable(std::shared_ptr<const BOARD> pos);
+
+extern int GetPvLine(const int depth, std::shared_ptr<BOARD> pos);
 
 #endif

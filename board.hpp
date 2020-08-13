@@ -12,6 +12,8 @@
 //  Convert from 64 board to 120 board
 #define SQ120(sq64) (Sq64ToSq120[(sq64)])
 
+#define MAXDEPTH 64
+
 #include<string>
 #include<algorithm>
 #include<iostream>
@@ -31,7 +33,7 @@ enum {
   A5 = 61, B5, C5, D5, E5, F5, G5, H5,
   A6 = 71, B6, C6, D6, E6, F6, G6, H6,
   A7 = 81, B7, C7, D7, E7, F7, G7, H7,
-  A8 = 91, B8, C8, D8, E8, F8, G8, H8, 
+  A8 = 91, B8, C8, D8, E8, F8, G8, H8,
   NO_SQ, OFF_BOARD
 };
 
@@ -79,6 +81,7 @@ struct BOARD {
 //  Store the en-passant square, one before the played pawn
   int enPas = {};
 
+//  count of half moves in the current search
   int ply = {};
 //  history ply
   int hisPly = {};
@@ -95,14 +98,18 @@ struct BOARD {
   int majPce[2] = {};
 //  Count of all the minor pieces : knight, bishop
   int minPce[2] = {};
-//  material of the two sides
+//  Material of the two sides
   int material[2] = {};
 
   UNDO history[MAX_MOVES];
-//  mapping from all pieces to the 120 board
+//  Mapping from all pieces to the 120 board
   int pList[13][10] = {};
-//Principal Variation Table
-  std::shared_ptr<PVTABLE> PvTable;
+//  Principal Variation Table
+  std::unique_ptr<PVTABLE> PvTable;
+  std::unique_ptr<int[]> PvArray;
+
+  int searchHistory[13][BRDSQ_120];
+  int searchKillers[2][MAXDEPTH];
 
   BOARD();
 };
@@ -128,16 +135,16 @@ extern std::string PiceChar;
 extern std::string SideChar;
 
 //Initialize the conversion arrays
-extern void initBoard();
+extern void InitBoard();
 
 //Set the state of the board as empty
 extern void ResetBoard(std::shared_ptr<BOARD> pos);
 
 //Prints the conversion from 64 to 120 and vice versa
-extern void printBoard();
+extern void PrintBoard();
 
 //Print the pieces as present on the board
-extern void printBoard(std::shared_ptr<BOARD> pos);
+extern void PrintBoard(std::shared_ptr<BOARD> pos);
 
 //Update evaluation material
 extern void UpdateListMaterial(std::shared_ptr<BOARD> pos);

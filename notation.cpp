@@ -81,8 +81,7 @@ void ParseFen(std::shared_ptr<BOARD> pos, const std::string fen) {
   ++idx;
   pos->fifty_move = fen[++idx] - '0';
   
-  ++idx;
-  pos->ply = fen[++idx] - '0';
+  pos->ply = 0;
 
   pos->key = GeneratePosKey(pos);
 
@@ -132,7 +131,7 @@ int ParseMove(std::shared_ptr<const BOARD> pos, std::string input) {
   int from = FR2SQ(input[0] - 'a', input[1] - '1');
   int to = FR2SQ(input[2] - 'a', input[3] - '1');
 
-  assert(onBoard(from) && onBoard(to));
+  assert(OnBoard(from) && OnBoard(to));
 
   std::shared_ptr<MOVE_LIST> list(new MOVE_LIST);
 
