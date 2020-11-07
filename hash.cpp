@@ -4,7 +4,7 @@ unsigned U64 PieceKeys[13][120];
 unsigned U64 SideKey;
 unsigned U64 CastleKeys[16];
 
-void initHash() {
+void InitHash() {
   for(int piece = EMPTY; piece <= bK; ++piece)
     for(int pos = 0; pos < BRDSQ_120; ++pos)
       PieceKeys[piece][pos] = RAND_64;

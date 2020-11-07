@@ -6,5 +6,6 @@
 #include"move.hpp"
 #include"test.hpp"
 #include"validate.hpp"
+#include "search.hpp"
 
 #endif

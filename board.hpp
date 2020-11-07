@@ -19,7 +19,7 @@
 #include<iostream>
 #include<iomanip>
 #include<memory>
-#include<assert.h>
+#include<cassert>
 
 //Sides
 enum { WHITE, BLACK, BOTH };

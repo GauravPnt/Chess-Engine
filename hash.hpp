@@ -20,7 +20,7 @@ extern unsigned U64 CastleKeys[16];
 //EnPas pos is taken care by PieceKeys[EMPTY][pos->enPas]
 
 //Initialize the hash to set the unique values
-extern void initHash();
+extern void InitHash();
 //Generate key for given board state
 extern unsigned U64 GeneratePosKey(std::shared_ptr<const BOARD> pos);
 

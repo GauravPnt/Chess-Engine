@@ -1,12 +1,10 @@
 #include"move.hpp"
 
-const int PMov[2][2] = {{10, 20}, {-10, -20}};
-const int PAttack[2][2] = {{9, 11}, {-9, -11}};
-
-const int NMov[8] = {-8, -19, -21, -12, 8, 19, 21, 12};
-const int BMov[4] = {-9, -11, 11, 9};
-const int RMov[4] = {-1, -10, 1, 10};
-const int KMov[8] = {-1, -10, 1, 10, -9, -11, 11, 9};
+//Allowed moves for knight, bishop, rook, king
+static const int NMov[8] = {-8, -19, -21, -12, 8, 19, 21, 12};
+static const int BMov[4] = {-9, -11, 11, 9};
+static const int RMov[4] = {-1, -10, 1, 10};
+static const int KMov[8] = {-1, -10, 1, 10, -9, -11, 11, 9};
 
 bool IsSqAttacked(const int sq, const int side, std::shared_ptr<const BOARD> pos) {
 

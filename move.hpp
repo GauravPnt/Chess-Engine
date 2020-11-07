@@ -49,6 +49,8 @@ struct MOVE{
   int move = {};
 //  Move score for move ordering
   int score = {};
+
+  inline bool operator> (const MOVE &m) const;
 };
 
 //List of moves
@@ -57,25 +59,13 @@ struct MOVE_LIST{
   MOVE moves[MAXPOSITIONMOVES] = {};
 //  Count of moves in the array
   int count = {};
+
+  void SortMoves();
+  MOVE_LIST();
 };
 
 //FEN string for the start of the game
 extern const std::string START_FEN;
-
-//Allowed non attack moves for white and black pawns
-extern const int PMov[2][2];
-//Allowed attack moves for white and black pawns
-extern const int PAttack[2][2];
-
-//Allowed moves for knight, bishop, rook, king
-extern const int NMov[8]; 
-extern const int BMov[4];
-extern const int RMov[4];
-extern const int KMov[8];
-
-extern const int Mov[13][8];
-extern const int SlidePieces[2][3];
-extern const int NonSlidePce[2][2];
 
 //Convert from 120 to sq (e.g. 21 to A1)
 extern std::string PrSq(const int sq);
@@ -94,7 +84,7 @@ extern bool IsSqAttacked(const int sq, const int side, std::shared_ptr<const BOA
  */
 
 static void AddQuietMove(int move, std::shared_ptr<MOVE_LIST> list);
-static void AddCaptureMove(int move, std::shared_ptr<MOVE_LIST> list);
+static void AddCaptureMove(int move, std::shared_ptr<MOVE_LIST> list, std::shared_ptr<const BOARD> pos);
 static void AddEnPassantMove(int move, std::shared_ptr<MOVE_LIST> list);
 
 /******************** PAWN MOVES ********************
@@ -107,6 +97,8 @@ static void AddPawnMove(std::shared_ptr<const BOARD> pos, const int from, const 
 static void AddPawnMove(std::shared_ptr<const BOARD> pos, const int from, const int to, const int side, std::shared_ptr<MOVE_LIST> list);
 
 //Loop all pieces and add all the possible moves corresponding to each to move list
+extern void GenerateAllQuietMoves(std::shared_ptr<const BOARD> pos, std::shared_ptr<MOVE_LIST> list);
+extern void GenerateAllCaptureMoves(std::shared_ptr<const BOARD> pos, std::shared_ptr<MOVE_LIST> list);
 extern void GenerateAllMoves(std::shared_ptr<const BOARD> pos, std::shared_ptr<MOVE_LIST> list);
 
 //Clear the piece, update key, material, minPce, majPce, bigPce, pList, pieces, pceNum
@@ -134,7 +126,10 @@ extern bool MoveExists(std::shared_ptr<BOARD> pos, const int move);
 
 //Retrieve principal variation move
 extern int ProbePvTable(std::shared_ptr<const BOARD> pos);
-
+//Fill the PV Array after probing the PV Table
 extern int GetPvLine(const int depth, std::shared_ptr<BOARD> pos);
+
+//Initialise Most valuable victim Least valuable attacker array
+static void InitMvvLva();
 
 #endif

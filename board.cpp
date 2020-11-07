@@ -14,7 +14,7 @@ std::string SideChar = "wb-";
 int pieceBig[13] = { false, false, true, true, true, true, true, false, true, true, true, true, true };
 int pieceMaj[13] = { false, false, false, false, true, true, true, false, false, false, true, true, true };
 int pieceMin[13] = { false, false, true, true, false, false, false, false, true, true, false, false, false };
-int pieceVal[13] = { 0, 100, 325, 325, 550, 1000, 50000, 100, 325, 325, 550, 1000, 50000 };
+int pieceVal[13] = { 0, 100, 320, 330, 500, 900, 20000, 100, 320, 330, 500, 900, 20000 };
 int pieceCol[13] = { BOTH, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK };
 int piecePwn[13] = { false, true, false, false, false, false, false, true, false, false, false, false, false };
 
@@ -22,7 +22,7 @@ BOARD::BOARD() {
   PvTable = std::make_unique<PVTABLE>(PVTABLE(PvSize));
   PvArray = std::unique_ptr<int[]>(new int[MAXDEPTH]);
   InitBoard();
-  initHash();
+  InitHash();
 }
 
 void InitBoard() {
