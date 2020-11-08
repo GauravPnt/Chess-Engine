@@ -18,8 +18,8 @@ s{int_depth} - search the state tree to a given depth, 's-' implies infinite sea
 ```
 
 ### To Do
-- [ ]Add a chess board protocol (UCI maybe ?)
-- [ ]Include other techniques like null move pruning, transposition tables, bitboards
+- [ ] Add a chess board protocol (UCI maybe ?)
+- [ ] Include other techniques like null move pruning, transposition tables, bitboards
 
 PERFT Tests - 
 https://www.chessprogramming.org/Perft_Results
