@@ -2,7 +2,7 @@
 #define HASH_H
 
 #include<cstdlib>
-#include"board.h"
+#include"board.hpp"
 
 //Generates 64 bit random number
 #define RAND_64 ( (U64)rand() | \
@@ -20,8 +20,8 @@ extern unsigned U64 CastleKeys[16];
 //EnPas pos is taken care by PieceKeys[EMPTY][pos->enPas]
 
 //Initialize the hash to set the unique values
-extern void initHash();
+extern void InitHash();
 //Generate key for given board state
-extern unsigned U64 GeneratePosKey(const BOARD* pos);
+extern unsigned U64 GeneratePosKey(std::shared_ptr<const BOARD> pos);
 
 #endif

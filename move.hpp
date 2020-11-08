@@ -1,8 +1,8 @@
 #ifndef MOVES_H
 #define MOVES_H
 
-#include"board.h"
-#include"validate.h"
+#include"board.hpp"
+#include"validate.hpp"
 
 /******************** MOVE INT DEFINITION *******************************
  * 0000 0000 0000 0000 0000 0111 1111 -> From
@@ -40,49 +40,42 @@
 #define CAPTURED(m) (((m) >> 14) & 0xF)
 #define PROMOTED(m) (((m) >> 20) & 0xF)
 
+//Any illegal move
+#define NOMOVE 0
+
 //Defines a move for a game
-typedef struct {
+struct MOVE{
 //  Move int that stores the info of a move
-  int move;
+  int move = {};
 //  Move score for move ordering
-  int score;
-} MOVE;
+  int score = {};
+
+  inline bool operator> (const MOVE &m) const;
+};
 
 //List of moves
-typedef struct {
+struct MOVE_LIST{
 //  Array storing the moves
-  MOVE moves[MAXPOSITIONMOVES];
+  MOVE moves[MAXPOSITIONMOVES] = {};
 //  Count of moves in the array
-  int count;
-} MOVE_LIST;
+  int count = {};
+
+  void SortMoves();
+  MOVE_LIST();
+};
 
 //FEN string for the start of the game
 extern const std::string START_FEN;
-
-//Allowed non attack moves for white and black pawns
-extern const int PMov[2][2];
-//Allowed attack moves for white and black pawns
-extern const int PAttack[2][2];
-
-//Allowed moves for knight, bishop, rook, king
-extern const int NMov[8]; 
-extern const int BMov[4];
-extern const int RMov[4];
-extern const int KMov[8];
-
-extern const int Mov[13][8];
-extern const int SlidePieces[2][3];
-extern const int NonSlidePce[2][2];
 
 //Convert from 120 to sq (e.g. 21 to A1)
 extern std::string PrSq(const int sq);
 //Print move in format FsqTsqPr
 extern std::string PrMove(const int move);
 //Print move list
-void PrintMoveList(MOVE_LIST *list);
+void PrintMoveList(std::shared_ptr<const MOVE_LIST> list);
 
 //Check if the current square is attacked by side
-extern bool isSqAttacked(const int sq, const int side, const BOARD* pos);
+extern bool IsSqAttacked(const int sq, const int side, std::shared_ptr<const BOARD> pos);
 
 /****************** MOVE TYPES *******************
  * Quiet
@@ -90,9 +83,9 @@ extern bool isSqAttacked(const int sq, const int side, const BOARD* pos);
  * En passant
  */
 
-static void AddQuietMove(const BOARD* pos, int move, MOVE_LIST* list);
-static void AddCaptureMove(const BOARD* pos, int move, MOVE_LIST* list);
-static void AddEnPassantMove(const BOARD* pos, int move, MOVE_LIST* list);
+static void AddQuietMove(int move, std::shared_ptr<MOVE_LIST> list);
+static void AddCaptureMove(int move, std::shared_ptr<MOVE_LIST> list, std::shared_ptr<const BOARD> pos);
+static void AddEnPassantMove(int move, std::shared_ptr<MOVE_LIST> list);
 
 /******************** PAWN MOVES ********************
  *Pawn moves are special due to promotion
@@ -100,28 +93,43 @@ static void AddEnPassantMove(const BOARD* pos, int move, MOVE_LIST* list);
  * Capture
  */
 
-static void AddPawnMove(const BOARD *pos, const int from, const int to, const int cap, const int side, MOVE_LIST *list);
-static void AddPawnMove(const BOARD *pos, const int from, const int to, const int side, MOVE_LIST *list);
+static void AddPawnMove(std::shared_ptr<const BOARD> pos, const int from, const int to, const int cap, const int side, std::shared_ptr<MOVE_LIST> list);
+static void AddPawnMove(std::shared_ptr<const BOARD> pos, const int from, const int to, const int side, std::shared_ptr<MOVE_LIST> list);
 
 //Loop all pieces and add all the possible moves corresponding to each to move list
-extern void GenerateAllMoves(const BOARD* pos, MOVE_LIST* list);
+extern void GenerateAllQuietMoves(std::shared_ptr<const BOARD> pos, std::shared_ptr<MOVE_LIST> list);
+extern void GenerateAllCaptureMoves(std::shared_ptr<const BOARD> pos, std::shared_ptr<MOVE_LIST> list);
+extern void GenerateAllMoves(std::shared_ptr<const BOARD> pos, std::shared_ptr<MOVE_LIST> list);
 
 //Clear the piece, update key, material, minPce, majPce, bigPce, pList, pieces, pceNum
-static void clearPiece(const int sq, BOARD *pos);
+static void ClearPiece(const int sq, std::shared_ptr<BOARD> pos);
 
 //Add piece, update key, material, majPce, minPce, bigPce, pList, pieces, pceNum
-static void addPiece(const int sq, BOARD *pos, const int pce);
+static void AddPiece(const int sq, std::shared_ptr<BOARD> pos, const int pce);
 
 //Move piece, update key, pList, pieces
-static void movePiece(const int from, const int to, BOARD *pos);
+static void MovePiece(const int from, const int to, std::shared_ptr<BOARD> pos);
 
-//Values of castlePerm for each sq
-static int castlePerm(int sq);
+//Values of CastlePerm for each sq
+static int CastlePerm(int sq);
 
 //Takes move and updates the board structure
-extern bool makeMove(BOARD *pos, int move);
+extern bool MakeMove(std::shared_ptr<BOARD> pos, int move);
 
 //Undo a move
-extern void takeMove(BOARD *pos);
+extern void TakeMove(std::shared_ptr<BOARD> pos);
+
+//Store principal variation move
+extern void StorePvMove(std::shared_ptr<BOARD> pos, const int move);
+//Check if given move exists for the position
+extern bool MoveExists(std::shared_ptr<BOARD> pos, const int move);
+
+//Retrieve principal variation move
+extern int ProbePvTable(std::shared_ptr<const BOARD> pos);
+//Fill the PV Array after probing the PV Table
+extern int GetPvLine(const int depth, std::shared_ptr<BOARD> pos);
+
+//Initialise Most valuable victim Least valuable attacker array
+static void InitMvvLva();
 
 #endif

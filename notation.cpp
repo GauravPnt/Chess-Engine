@@ -1,9 +1,10 @@
-#include"hash.h"
-#include"move.h"
+#include"board.hpp"
+#include"hash.hpp"
+#include"move.hpp"
 
 const std::string START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-void Parse_Fen(BOARD* pos, const std::string Fen) {
+void ParseFen(std::shared_ptr<BOARD> pos, const std::string fen) {
   int count = 0;
   int rank = RANK_8;
   int file = FILE_A;
@@ -12,7 +13,7 @@ void Parse_Fen(BOARD* pos, const std::string Fen) {
 
   ResetBoard(pos);
 
-  for(auto i : Fen) {
+  for(auto i : fen) {
     ++idx;
 
     if(sq64 >= 64)
@@ -57,11 +58,11 @@ void Parse_Fen(BOARD* pos, const std::string Fen) {
       ++sq64, ++file; 
   }
 
-  pos->side = ( Fen[idx] == 'w' ? WHITE : BLACK );
+  pos->side = (fen[idx] == 'w' ? WHITE : BLACK );
   
   idx += 2;
-  while(Fen[idx] != ' ') {
-    switch(Fen[idx]) {
+  while(fen[idx] != ' ') {
+    switch(fen[idx]) {
       case 'K' : pos->castlePerm |= WKCA; break;
       case 'Q' : pos->castlePerm |= WQCA; break;
       case 'k' : pos->castlePerm |= BKCA; break;
@@ -71,17 +72,16 @@ void Parse_Fen(BOARD* pos, const std::string Fen) {
     ++idx;
   }
 
-  if(Fen[++idx] != '-') {
-    int file = Fen[idx] - 'a';
-    int rank = Fen[++idx] - '1';
+  if(fen[++idx] != '-') {
+    int file = fen[idx] - 'a';
+    int rank = fen[++idx] - '1';
     pos->enPas = FR2SQ(file, rank);
   }
 
   ++idx;
-  pos->fifty_move = Fen[++idx] - '0';
+  pos->fifty_move = fen[++idx] - '0';
   
-  ++idx;
-  pos->ply = Fen[++idx] - '0';
+  pos->ply = 0;
 
   pos->key = GeneratePosKey(pos);
 
@@ -116,4 +116,39 @@ std::string PrMove(const int move) {
   }
 
   return res;
+}
+
+int ParseMove(std::shared_ptr<const BOARD> pos, std::string input) {
+  if(input.size() < 4 && input.size() > 5) {
+    return NOMOVE;
+  }
+
+  if(input[0] < 'a' || input[0] > 'h' || input[1] < '1' || input[1] > '8' ||
+      input[2] < 'a' || input[2] > 'h' || input[3] < '1' || input[3] > '8') {
+    return NOMOVE;
+  }
+
+  int from = FR2SQ(input[0] - 'a', input[1] - '1');
+  int to = FR2SQ(input[2] - 'a', input[3] - '1');
+
+  assert(OnBoard(from) && OnBoard(to));
+
+  std::shared_ptr<MOVE_LIST> list(new MOVE_LIST);
+
+  GenerateAllMoves(pos, list);
+
+  for(int MoveNum = 0; MoveNum < list->count; ++MoveNum) {
+    MOVE move = list->moves[MoveNum];
+    if(FROMSQ(move.move) == from && TOSQ(move.move) == to) {
+      int promoted = PROMOTED(move.move);
+      if(input.size() == 5 && promoted != EMPTY) {
+        if(isQ(promoted) && input[4] == 'q' || isR(promoted) && input[4] == 'r' ||
+            isN(promoted) && input[4] == 'n' || isB(promoted) && input[4] == 'b')
+          return move.move;
+      } else
+        return move.move;
+    }
+  }
+
+  return NOMOVE;
 }
